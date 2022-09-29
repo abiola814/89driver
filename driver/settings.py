@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from decouple import config
 import django_heroku
 import dj_database_url
-
+import os
 from pathlib import Path
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
