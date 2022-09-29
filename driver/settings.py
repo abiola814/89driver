@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-ixdy-hmg=3j!2xoudh$)4@cd90^co2m^2wn_b0j)_lq$!hnh+r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['driver86.herokuapp.com','www.driver86.herokuapp.com']
 
 
 # Application definition
