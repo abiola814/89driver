@@ -70,11 +70,13 @@ class ValidatePhoneSendOTP(GenericAPIView):
             })
 
 class Register(GenericAPIView):
-    serializer_class = CreateUserSerializer
+
 
 
     '''Takes phone and a email and creates a new user only if otp was verified and phone is new'''
 
+
+    serializer_class = CreateUserSerializer
     def post(self, request, *args, **kwargs):
         phone = request.data.get('phone', False)
         email = request.data.get('email', False)
@@ -169,12 +171,15 @@ class ValidateLogin(GenericAPIView):
             })
 
 class LoginAPI(KnoxLoginView,GenericAPIView):
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = LoginUserSerializer
+
     """
     this api takes the user phone number and otp 
     it check if the otp is correct if not send a false status
     """
+    serializer_class = LoginUserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+
 
     def post(self, request, format=None):
         phone = request.data.get('phone')
@@ -204,14 +209,16 @@ class LoginAPI(KnoxLoginView,GenericAPIView):
 
 
 class ValidateDriver(GenericAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (TokenAuthentication, )
-    serializer_class = DriverSerializer
     """
     this api post check the driver information 
     and create it
     if it is correct
     """
+    serializer_class = DriverSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
+
 
     def post(self, request, format=None):
         email = request.user.email
@@ -240,12 +247,14 @@ class ValidateDriver(GenericAPIView):
                     })
 
 class ValidateVehicle(GenericAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (TokenAuthentication, )
-    serializer_class = VehicleSerializer
     '''
     this api check the vehincle info and save it
     '''
+    serializer_class = VehicleSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+ 
+
     def post(self, request, format=None):
         make = request.data.get('make')
         year = request.data.get('year')
@@ -271,12 +280,13 @@ class ValidateVehicle(GenericAPIView):
 
 
 class Validateowner(GenericAPIView):
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (TokenAuthentication, )
-    serializer_class = OwnerSerializer
     """
     this api create a database for the owner with he or her resturant information
     """
+    serializer_class = OwnerSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
 
     def post(self, request, format=None):
         email = request.user.email
