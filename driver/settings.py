@@ -10,6 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from decouple import config
+import django_heroku
+import dj_database_url
+
 from pathlib import Path
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -129,7 +133,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -157,3 +161,7 @@ REST_KNOX={
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ACCOUNT_SSID ="AC5a24fcfe9ffe6f21c789f6ac6b937920"
 AUTH_TOKEN="8c2e0ceb9b6b0c901fe0d157f5bcd8b6"
+
+COMPRESS_ENABLED = os.environ.get('COMPRESS_ENABLED', False)
+
+django_heroku.settings(locals())
