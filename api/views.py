@@ -14,7 +14,7 @@ from .message import MessageHandler
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest
-from .serializer import CreateUserSerializer,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializer
+from .serializer import CreateUserSerializer, DriverSerializers,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializers
 from .utils import otp_generator, password_generator, phone_validator
 
 
@@ -430,7 +430,7 @@ class DriverRequests(GenericAPIView):
     api for updating the driver request
     '''
     serializer_class = JobRequestSerializer
-    serializer_class = DriverSerializer
+    serializer_class = DriverSerializers
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
     def get(self,request,format=None):
@@ -456,7 +456,7 @@ class DriverRequests(GenericAPIView):
             job.status='active'
             job.save()
             tempdata = {'status':'Accept'}
-            serializer = DriverSerializer(driverrequest,data=tempdata,partial=True)
+            serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response({
@@ -466,7 +466,7 @@ class DriverRequests(GenericAPIView):
             job.status='delivered'
             job.save()
             tempdata = {'status':'Completed'}
-            serializer = DriverSerializer(driverrequest,data=tempdata,partial=True)
+            serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response({
