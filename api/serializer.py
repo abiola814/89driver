@@ -4,7 +4,7 @@ from dataclasses import fields
 import email
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from api.models import Drivers, Ownerprofiles, Vehicle
+from api.models import Drivers, Ownerprofiles, Vehicle,JobRequest,DriverRequest
 
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -79,4 +79,21 @@ class OwnerSerializer(serializers.ModelSerializer):
         model = Ownerprofiles
         fields = ('email','name',"resturant_name","resturant_location",'user')
 
+class JobRequestSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = JobRequest
+        fields = ('id','status','pickup_long','pickup_lat','delivery_lat','delivery_long','pickup_address','resturant_name','distance','duration','price','owner')
 
+
+class RequestSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = JobRequest
+        fields = ('id','carier','status')
+
+class DriverSerializer(serializers.ModelSerializer):
+    jobrequest == serializers.PrimaryKeyRelatedField(queryset=JobRequest.objects.all())
+    class Meta:
+        model = DriverRequest
+        fields = ('jobrequest','carier','status')

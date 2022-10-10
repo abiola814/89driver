@@ -12,6 +12,10 @@ urlpatterns = [
     path('driver/',views.ValidateDriver.as_view(),name='login' ),
     path('owner/',views.Validateowner.as_view(),name='login' ),
     path('vehiclecheck/',views.ValidateVehicle.as_view(),name='vehicle' ),
+    path('activerequest/',views.activerequest.as_view(),name='active' ),
+    path('createjob/',views.Createjob.as_view(),name='job' ),
+        path('driverrequest/',views.DriverRequests.as_view(),name='job' ),
 
+        path('deliveredrequest/',views.Deliveredrequest.as_view(),name='job' ),
 
 ]

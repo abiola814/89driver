@@ -99,6 +99,7 @@ class User(AbstractBaseUser):
     auth_provider = models.CharField(
         max_length=255, blank=False,
         null=False, default=AUTH_PROVIDERS.get('phone'))
+    owner       = models.BooleanField(default=False)   
     standard    = models.CharField(max_length = 3, blank = True, null = True)
     score       = models.IntegerField(default = 16)
     first_login = models.BooleanField(default=False)
@@ -203,7 +204,7 @@ class Ownerprofiles(models.Model):
     def __str__(self):
         return str(self.user) 
     
-class job(models.Model):
+class JobRequest(models.Model):
     SMALL_SIZE='small'
     MEDIUM_SIZE='medium'
     LARGE_SIZE='large'
@@ -213,40 +214,62 @@ class job(models.Model):
         (LARGE_SIZE,'large')
     )
     Creating_status='creating'
-    Processing_status = 'processing'
-    Delivering_status='delivering'
-    Picking_status='picking'
+    Active_status = 'active'
+    Pending_status='pending'
     Cancel_status ='cancelled'
+    Delivered_status="Delivered"
     Completed_status="completed"
-    STATUSES=(
+    STATUSES=[
         (Creating_status,'Creating'),
-        (Processing_status,"Processing"),
-        (Delivering_status,"Delivering"),
-        (Cancel_status,"cancel"),
+        (Active_status,"active"),
+        (Delivered_status,"Delivered"),
+        (Cancel_status,"cancelled"),
         (Completed_status,"Completed"),
-        (Picking_status,"picking")
-    )
+        (Pending_status,"pending")
+    ]
 
     id = models.UUIDField(primary_key=True,default=uuid4,editable=False)
-    owner               =   models.ForeignKey(Ownerprofiles,on_delete=models.CASCADE)
-    name                =   models.CharField(max_length=255)
-    description         =   models.CharField(max_length=255)
+    owner               =   models.ForeignKey(User,on_delete=models.CASCADE)
+    description         =   models.CharField(max_length=255,blank = True, null = True)
     delivery_address    =   models.CharField(max_length=255)
     delivery_lat        =   models.CharField(max_length=15)
     delivery_long       =   models.CharField(max_length=10)
     pickup_address      =   models.CharField(max_length=255)
     pickup_lat          =   models.FloatField(default=0)
     pickup_long         =   models.FloatField(default=0)
+    resturant_name      =   models.CharField(max_length = 900, blank = True, null = True)
     carier              =   models.ForeignKey(Drivers,on_delete=models.CASCADE,null=True,blank=True)
-    photo               =   models.ImageField(upload_to='job/photo/')
-    status              =   models.CharField(max_length=20,choices=STATUSES,default=Creating_status)
+    status              =   models.CharField(max_length=255,choices=STATUSES,default=Creating_status)
     create_at           =   models.DateField(default=timezone.now)
     distance            =   models.IntegerField(default=0)
     duration            =   models.FloatField(default=0)
     price               =   models.FloatField(default=0)
 
     def __str__(self) -> str:
-        return self.name
+        return self.resturant_name
+
+class DriverRequest(models.Model):
+
+
+    Request="Request" 
+    Completed="Completed"
+    Accept ='Accept'
+    STATUSES=(
+        (Request,'Request'),
+        (Accept,"Accept"),
+        (Completed,"Completed"),
+        
+    )
+
+    id          =   models.UUIDField(primary_key=True,default=uuid4,editable=False)
+    jobrequest  =   models.ForeignKey(JobRequest,on_delete=models.CASCADE)
+    carier      =   models.ForeignKey(Drivers,on_delete=models.CASCADE,null=True,blank=True)
+    status      =   models.CharField(max_length=20,choices=STATUSES,default=Request)
+
+    def __str__(self) -> str:
+        return self.status
+
+    
 
 
 class PhoneOTP(models.Model):

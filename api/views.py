@@ -1,3 +1,4 @@
+from functools import partial
 import requests
 from django.contrib.auth import login
 from django.db.models import Q
@@ -10,10 +11,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from .message import MessageHandler
-
-
-from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle
-from .serializer import CreateUserSerializer,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer
+from rest_framework import status
+from rest_framework.generics import ListCreateAPIView
+from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest
+from .serializer import CreateUserSerializer,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializer
 from .utils import otp_generator, password_generator, phone_validator
 
 
@@ -309,4 +310,165 @@ class Validateowner(GenericAPIView):
             driver.save()
             return Response({
                         'status': True, 'detail': 'owner info added successfully.'
+                    })
+
+class Createjob(ListCreateAPIView):
+    '''
+    this api is used to create request of the resturant owner 
+    '''
+    serializer_class = JobRequestSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def post(self, request,format=None):
+        pickup_lat= request.data.get('pickup_lat')
+        pickup_long = request.data.get("pickup_long")
+        delivery_address= request.data.get("delivery_address")
+        delivery_lat = request.data.get("delivery_lat")
+        delivery_long = request.data.get("delivery_long")
+        pickup_address= request.data.get("pickup_address")
+        resturant_name = request.data.get("resturant_name")
+        owner=request.user
+        temp_data = {'owner': owner.id,'pickup_address':pickup_address,'pickup_lat':pickup_lat,'delivery_address':delivery_address,
+        'delivery_lat':delivery_lat,'delivery_long':delivery_long,'resturant_name':resturant_name,
+        'pickup_long':pickup_long
+        }
+        serializer = JobRequestSerializer(data=temp_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({
+                    'status': True, 'detail': 'Request succesfully created.'
+                })
+
+    def get(self,request):
+        user= request.user
+        try:
+            job= JobRequest.objects.filter(owner=user.id)
+        except JobRequest.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(
+                        JobRequestSerializer(job,many=True).data
+                    )
+        
+        
+
+
+
+
+class activerequest(GenericAPIView):
+    '''
+    api for updating the request
+
+    '''
+    serializer_class = RequestSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
+    def patch(self,request,format=None):
+        user= request.user
+        id= request.data.get('id')
+        
+        job= JobRequest.objects.get(id=id)
+        tempdata = {'status':'pending'}
+        serializer = RequestSerializer(job,data=tempdata,partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+                    'status': True, 'detail': 'Request succesfully changed to pending.'
+                })
+
+
+
+    def get(self,request,format=None):
+        user= request.user
+        try:
+            job= JobRequest.objects.filter(owner=user.id,status='active')
+        except JobRequest.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(
+                        RequestSerializer(job,many=True).data
+                    ) 
+
+class Deliveredrequest(GenericAPIView):
+    '''S
+    api for updating the request
+
+    '''
+    serializer_class = RequestSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
+    def patch(self,request,format=None):
+        user= request.user
+        id= request.data.get('id')
+        
+        job= JobRequest.objects.get(id=id)
+        tempdata = {'status':'completed'}
+        serializer = RequestSerializer(job,data=tempdata,partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+                    'status': True, 'detail': 'Request succesfully changed to completed.'
+                })
+
+
+
+    def get(self,request,format=None):
+        user= request.user
+        try:
+            job= JobRequest.objects.filter(owner=user.id,status='delivered')
+        except JobRequest.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(
+                        RequestSerializer(job,many=True).data
+                    ) 
+
+
+
+class DriverRequests(GenericAPIView):
+    '''
+    api for updating the driver request
+    '''
+    serializer_class = JobRequestSerializer
+    serializer_class = DriverSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def get(self,request,format=None):
+        user = request.user
+        status = request.data.get('status')
+        # job_request= JobRequest.objects.get(id=id)
+        driver_id = Drivers.objects.get(user = user)
+        print(driver_id)
+        driverrequest= DriverRequest.objects.filter(status=status)
+        return Response(
+                        RequestSerializer(driverrequest,many=True).data
+                    ) 
+
+    def patch(self,request,format=None):
+        user= request.user
+        id= request.data.get('id')
+        status= request.data.get('status')
+        
+
+        driverrequest= DriverRequest.objects.get(id=id)
+        job= JobRequest.objects.get(id=driverrequest.jobrequest.id)
+        if status == 'Accept':
+            job.status='active'
+            job.save()
+            tempdata = {'status':'Accept'}
+            serializer = DriverSerializer(driverrequest,data=tempdata,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({
+                        'status': True, 'detail': 'Request succesfully changed to accpeted.'
+                    })
+        elif status=='Completed':
+            job.status='delivered'
+            job.save()
+            tempdata = {'status':'Completed'}
+            serializer = DriverSerializer(driverrequest,data=tempdata,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({
+                        'status': True, 'detail': 'Request succesfully changed to Completed.'
                     })
