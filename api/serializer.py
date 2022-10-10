@@ -93,7 +93,7 @@ class RequestSerializer(serializers.ModelSerializer):
         fields = ('id','carier','status')
 
 class DriverSerializer(serializers.ModelSerializer):
-    jobrequest == serializers.PrimaryKeyRelatedField(queryset=JobRequest.objects.all())
+    jobrequest = serializers.PrimaryKeyRelatedField(queryset=JobRequest.objects.all())
     class Meta:
         model = DriverRequest
         fields = ('jobrequest','carier','status')
