@@ -105,11 +105,23 @@ class Register(GenericAPIView):
                         serializer.is_valid(raise_exception=True)
                         user = serializer.save()
                         user.save()
-
-                        return Response({
-                            'status' : True, 
-                            'detail' : 'Congrts, user has been created successfully.'
-                        })
+                        serializer = LoginUserSerializer(data=request.data)
+                        serializer.is_valid(raise_exception=True)
+                        user = serializer.validated_data['user']
+                        if user.last_login is None :
+                            user.first_login = True
+                            user.save()
+                            
+                        elif user.first_login:
+                            user.first_login = False
+                            user.save()
+                                
+                            login(request, user,backend='api.auth_backend.PasswordlessAuthBackend2')
+                            return super().post(request, format=None)
+                        # return Response({
+                        #     'status' : True, 
+                        #     'detail' : 'Congrts, user has been created successfully.'
+                        # })
                     else:
                         return Response({
                             'status': False,
@@ -429,8 +441,8 @@ class DriverRequests(GenericAPIView):
     '''
     api for updating the driver request
     '''
-    serializer_class = JobRequestSerializer
-    serializer_class = DriverSerializers
+
+    serializer_class = (DriverSerializers,JobRequestSerializer)
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
     def get(self,request,format=None):
@@ -438,10 +450,12 @@ class DriverRequests(GenericAPIView):
         status = request.data.get('status')
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
+        job = JobRequest.objects.filter(carier=driver_id)
         print(driver_id)
         driverrequest= DriverRequest.objects.filter(status=status)
         return Response(
-                        RequestSerializer(driverrequest,many=True).data
+                        DriverSerializers(driverrequest,many=True).data,
+                   
                     ) 
 
     def patch(self,request,format=None):

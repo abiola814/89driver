@@ -228,7 +228,7 @@ class JobRequest(models.Model):
         (Pending_status,"pending")
     ]
 
-    id = models.UUIDField(primary_key=True,default=uuid4,editable=False)
+    id                  =   models.UUIDField(primary_key=True,default=uuid4,editable=False)
     owner               =   models.ForeignKey(User,on_delete=models.CASCADE)
     description         =   models.CharField(max_length=255,blank = True, null = True)
     delivery_address    =   models.CharField(max_length=255)
@@ -246,7 +246,7 @@ class JobRequest(models.Model):
     price               =   models.FloatField(default=0)
 
     def __str__(self) -> str:
-        return self.resturant_name
+        return f"{self.resturant_name} {self.delivery_address}"
 
 class DriverRequest(models.Model):
 
@@ -254,15 +254,17 @@ class DriverRequest(models.Model):
     Request="Request" 
     Completed="Completed"
     Accept ='Accept'
+    Declined = 'Declined'
     STATUSES=(
         (Request,'Request'),
         (Accept,"Accept"),
         (Completed,"Completed"),
+        (Declined,"Declined"),
         
     )
 
     id          =   models.UUIDField(primary_key=True,default=uuid4,editable=False)
-    jobrequest  =   models.ForeignKey(JobRequest,on_delete=models.CASCADE)
+    jobrequest  =   models.ForeignKey(JobRequest,related_name='jobrequesting',on_delete=models.CASCADE,)
     carier      =   models.ForeignKey(Drivers,on_delete=models.CASCADE,null=True,blank=True)
     status      =   models.CharField(max_length=20,choices=STATUSES,default=Request)
 
