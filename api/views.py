@@ -124,6 +124,7 @@ class Register(GenericAPIView):
                         # })
                     else:
                         return Response({
+
                             'status': False,
                             'detail': 'invalid otp'
 
@@ -138,7 +139,7 @@ class Register(GenericAPIView):
         else:
             return Response({
                 'status' : False,
-                'detail' : 'Either phone or email was not recieved in Post request'
+                'detail' : 'Either phone number or email was not recieved in Post request'
             })
 
 class ValidateLogin(GenericAPIView):
