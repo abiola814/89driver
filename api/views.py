@@ -105,23 +105,11 @@ class Register(GenericAPIView):
                         serializer.is_valid(raise_exception=True)
                         user = serializer.save()
                         user.save()
-                        serializer = LoginUserSerializer(data=request.data)
-                        serializer.is_valid(raise_exception=True)
-                        user = serializer.validated_data['user']
-                        if user.last_login is None :
-                            user.first_login = True
-                            user.save()
-                            
-                        elif user.first_login:
-                            user.first_login = False
-                            user.save()
-                                
-                            login(request, user,backend='api.auth_backend.PasswordlessAuthBackend2')
-                            return super().post(request, format=None)
-                        # return Response({
-                        #     'status' : True, 
-                        #     'detail' : 'Congrts, user has been created successfully.'
-                        # })
+              
+                        return Response({
+                            'status' : True, 
+                            'detail' : 'Congrts, user has been created successfully.'
+                        })
                     else:
                         return Response({
 
