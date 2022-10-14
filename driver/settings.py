@@ -161,6 +161,7 @@ REST_KNOX={
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ACCOUNT_SSID ="AC5a24fcfe9ffe6f21c789f6ac6b937920"
 AUTH_TOKEN="8c2e0ceb9b6b0c901fe0d157f5bcd8b6"
+KILIL='88999
 
 COMPRESS_ENABLED = os.environ.get('COMPRESS_ENABLED', False)
 
