@@ -99,7 +99,7 @@ class Register(GenericAPIView):
                     save_otp=sotp.otp
                     print(save_otp)
                     if otp==save_otp:
-                        Temp_data = {'phone': phone, 'email': email }
+                        Temp_data = {'phone': phone, 'email': email,'otp': otp }
 
                         serializer = CreateUserSerializer(data=Temp_data)
                         serializer.is_valid(raise_exception=True)
