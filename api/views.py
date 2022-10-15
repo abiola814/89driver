@@ -99,13 +99,15 @@ class Register(GenericAPIView):
                     save_otp=sotp.otp
                     print(save_otp)
                     if otp==save_otp:
-                        Temp_data = {'phone': phone, 'email': email,'otp': otp }
+                        Temp_data = {'phone': phone, 'email': email}
 
                         serializer = CreateUserSerializer(data=Temp_data)
                         serializer.is_valid(raise_exception=True)
                         user = serializer.save()
                         user.save()
-              
+                        save_otps = User.objects.get(phone=phone)
+                        save_otps.otp=save_otp
+                        save_otps.save()
                         return Response({
                             'status' : True, 
                             'detail' : 'Congrts, user has been created successfully.'
@@ -256,7 +258,30 @@ class ValidateDriver(GenericAPIView):
         return Response(
                         DriverSerializer(job,many=True).data
                     )
+
         
+class Profile(GenericAPIView):
+    '''
+    this api GET profile
+
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def get(self,request):
+        user= request.user
+        try:
+           job= Drivers.objects.filter(user=user)
+        except Drivers.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        try:
+           veh= Vehicle.objects.filter(id=job.vehicle)
+        except Vehicle.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        ve= Drivers.objects.get(user=user)
+        veh= Vehicle.objects.filter(id=ve.vehicle)
+        return Response({'status': "true",'job':job,'vehicle':veh})
+        
+
 
 class ValidateVehicle(GenericAPIView):
     '''

@@ -171,7 +171,7 @@ class Vehicle(models.Model):
 
 
     def __str__(self):
-        return str(self.model) 
+        return str(self.id) 
 
 class Drivers(models.Model):
     user            =   models.OneToOneField(User, on_delete= models.CASCADE)

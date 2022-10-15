@@ -13,7 +13,7 @@ User = get_user_model()
 class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('phone', 'email','otp')
+        fields = ('phone', 'email')
 
 
     def create(self, validated_data):
