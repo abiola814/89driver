@@ -247,6 +247,16 @@ class ValidateDriver(GenericAPIView):
             return Response({
                         'status': True, 'detail': 'Driver successfully.'
                     })
+    def get(self,request):
+        user= request.user
+        try:
+            job= Drivers.objects.filter(user=user)
+        except Drivers.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(
+                        DriverSerializer(job,many=True).data
+                    )
+        
 
 class ValidateVehicle(GenericAPIView):
     '''
