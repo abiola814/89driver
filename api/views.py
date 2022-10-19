@@ -163,7 +163,7 @@ class ValidateLogin(GenericAPIView):
                     old.save()
                 else:
                     return Response({
-                                'status': 'False', 'detail' : "OTP sending error. Please try after some time."
+                                'status': False, 'detail' : "OTP sending error. Please try after some time."
                             })
 
                 return Response({
@@ -171,7 +171,7 @@ class ValidateLogin(GenericAPIView):
                 })
         else:
             return Response({
-                'status': 'False', 'detail' : "I haven't received any phone number. Please do a POST request."
+                'status': False, 'detail' : "I haven't received any phone number. Please do a POST request."
             })
 
 class LoginAPI(KnoxLoginView,GenericAPIView):
@@ -273,13 +273,16 @@ class Profile(GenericAPIView):
            job= Drivers.objects.filter(user=user)
         except Drivers.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        ve= Drivers.objects.get(user=user)
+        print(ve.vehicle)
         try:
-           veh= Vehicle.objects.filter(id=job.vehicle)
+            veh= Vehicle.objects.filter(id=ve.vehicle.id)
+            print(veh)
         except Vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        ve= Drivers.objects.get(user=user)
-        veh= Vehicle.objects.filter(id=ve.vehicle)
-        return Response({'status': "true",'job':job,'vehicle':veh})
+        
+        k = job.values()
+        return Response({'status': "true",'job':list(k),'vehicle':list(veh.values())})
         
 
 
