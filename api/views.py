@@ -466,10 +466,12 @@ class Deliveredrequest(GenericAPIView):
 
 class DriverRequests(GenericAPIView):
     '''
-    api for updating the driver request
+    api for get the driver request and completed job 
+    only pass the status of request or completed to get result for both delivery request and delivery completed
+    {status:"Request"} or {status:"Completed"}
     '''
 
-    serializer_class = (DriverSerializers,JobRequestSerializer)
+    serializer_class = DriverSerializers
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
     def get(self,request,format=None):
