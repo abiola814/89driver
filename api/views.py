@@ -484,7 +484,7 @@ class DriverRequests(GenericAPIView):
         driverrequest= DriverRequest.objects.filter(status=status)
         print(driverrequest)
         k = driverrequest.values(
-            jobrequest=JobRequest.objects.filter(carier=driver_id).values()
+            'jobrequest=JobRequest.objects.filter(carier=driver_id).values()'
         )
         return Response({'status': True,'job':list(k)})
 
