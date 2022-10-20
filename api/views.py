@@ -479,13 +479,11 @@ class DriverRequests(GenericAPIView):
         status = request.data.get('status')
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
-        job = JobRequest.objects.filter(carier=driver_id).values()
+        job = JobRequest.objects.filter(carier=driver_id)
         print(driver_id)
         driverrequest= DriverRequest.objects.filter(status=status)
         print(driverrequest)
-        k = driverrequest.values(
-            'jobrequest=JobRequest.objects.filter(carier=driver_id).values()'
-        )
+        k = driverrequest.values()
         return Response({'status': True,'job':list(k)})
 
     def patch(self,request,format=None):
