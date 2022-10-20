@@ -479,8 +479,10 @@ class DriverRequests(GenericAPIView):
         status = request.data.get('status')
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
+        job = JobRequest.objects.filter(carier=driver_id)
         print(driver_id)
         driverrequest= DriverRequest.objects.filter(status=status)
+        print(driverrequest)
         return Response(
                         DriverSerializers(driverrequest,many=True).data,
                    
