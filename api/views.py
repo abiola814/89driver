@@ -282,7 +282,7 @@ class Profile(GenericAPIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
         k = job.values()
-        return Response({'status': "true",'job':list(k),'vehicle':list(veh.values())})
+        return Response({'status': True,'job':list(k),'vehicle':list(veh.values())})
         
 
 
@@ -479,7 +479,6 @@ class DriverRequests(GenericAPIView):
         status = request.data.get('status')
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
-        job = JobRequest.objects.filter(carier=driver_id)
         print(driver_id)
         driverrequest= DriverRequest.objects.filter(status=status)
         return Response(
