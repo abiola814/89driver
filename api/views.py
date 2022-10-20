@@ -479,12 +479,18 @@ class DriverRequests(GenericAPIView):
         status = request.data.get('status')
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
-        job = JobRequest.objects.filter(carier=driver_id)
-        print(driver_id)
         driverrequest= DriverRequest.objects.filter(status=status)
-        print(driverrequest)
-        k = driverrequest.values()
-        return Response({'status': True,'job':list(k)})
+        # job = JobRequest.objects.filter(id=driverrequest.jobrequest)
+        # print(driver_id)
+
+        # print(driverrequest)
+        # k = job.values().update("request_id":driverrequest.id)
+        for l in driverrequest:
+            kd= {
+                "delivery_request":[l.values()],
+                "jobrequest":[JobRequest.objects.get(id=l.jobrequest).values()]
+            }
+        return Response({'status': True,'job':list(kd)})
 
     def patch(self,request,format=None):
         user= request.user
