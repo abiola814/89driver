@@ -488,7 +488,7 @@ class DriverRequests(GenericAPIView):
         for l in driverrequest:
             kd= {
                 "delivery_request":[l],
-                "jobrequest":[JobRequest.objects.get(id=l.jobrequest)]
+                "jobrequest":[JobRequest.objects.get(id=l.jobrequest.id)]
             }
         return Response({'status': True,'job':list(kd)})
 
