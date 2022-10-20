@@ -490,6 +490,7 @@ class DriverRequests(GenericAPIView):
                 "delivery_request":[l],
                 "jobrequest":[JobRequest.objects.get(id=l.jobrequest.id)]
             }
+        print(kd)
         return Response({'status': True,'job':list(kd)})
 
     def patch(self,request,format=None):
