@@ -483,10 +483,8 @@ class DriverRequests(GenericAPIView):
         print(driver_id)
         driverrequest= DriverRequest.objects.filter(status=status)
         print(driverrequest)
-        return Response(
-                        DriverSerializers(driverrequest,many=True).data,
-                   
-                    ) 
+        k = driverrequest.values()
+        return Response({'status': True,'job':list(k)})
 
     def patch(self,request,format=None):
         user= request.user
