@@ -1,5 +1,6 @@
 from functools import partial
 import requests
+import json
 from django.contrib.auth import login
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
@@ -489,13 +490,16 @@ class DriverRequests(GenericAPIView):
         for l in driverrequest:
             job=JobRequest.objects.get(id=l.jobrequest.id)
             kd= {
-                "delivery_request":{"id":l.id,"status":l.status},
-                "jobrequest":{'resturant_name':job.resturant_name,"delivery_address":job.delivery_address,},
+                "id":l.id,
+                "status":l.status,
+                'resturant_name':job.resturant_name,
+                "delivery_address":job.delivery_address
             }
             k.append(kd)
-        print(kd)
+        import json
+        jsonstring=json.dumps(k,indent=4)
 
-        return Response({'status': True,'job':list(k)})
+        return Response({'status': True,'job':jsonstring})
 
     def patch(self,request,format=None):
         user= request.user
