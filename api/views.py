@@ -485,13 +485,17 @@ class DriverRequests(GenericAPIView):
 
         # print(driverrequest)
         # k = job.values().update("request_id":driverrequest.id)
+        k=[]
         for l in driverrequest:
+            job=JobRequest.objects.get(id=l.jobrequest.id)
             kd= {
-                "delivery_request":[l],
-                "jobrequest":[JobRequest.objects.get(id=l.jobrequest.id)]
+                "delivery_request":{"id":l.id,"status":l.status},
+                "jobrequest":{'resturant_name':job.resturant_name,"delivery_address":job.delivery_address,},
             }
+            k.append(kd)
         print(kd)
-        return Response({'status': True,'job':list(kd)})
+
+        return Response({'status': True,'job':list(k)})
 
     def patch(self,request,format=None):
         user= request.user
