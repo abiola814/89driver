@@ -476,7 +476,7 @@ class DriverRequests(GenericAPIView):
     authentication_classes = (TokenAuthentication, )
     def get(self,request,format=None):
         user = request.user
-        status = request.data.get('status')
+        status = 'Request'
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
         driverrequest= DriverRequest.objects.filter(status=status)
@@ -525,3 +525,35 @@ class DriverRequests(GenericAPIView):
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Completed.'
                     })
+class DriverRequestsCompleted(GenericAPIView):
+    '''
+    api for get the driver request and completed job 
+    only pass the status of request or completed to get result for both delivery request and delivery completed
+    {status:"Request"} or {status:"Completed"}
+    '''
+
+    serializer_class = DriverSerializers
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def get(self,request,format=None):
+        user = request.user
+        status = 'Completed'
+        # job_request= JobRequest.objects.get(id=id)
+        driver_id = Drivers.objects.get(user = user)
+        driverrequest= DriverRequest.objects.filter(status=status)
+        # job = JobRequest.objects.filter(id=driverrequest.jobrequest)
+        # print(driver_id)
+
+        # print(driverrequest)
+        # k = job.values().update("request_id":driverrequest.id)
+        k=[]
+        for l in driverrequest:
+            job=JobRequest.objects.get(id=l.jobrequest.id)
+            kd= {
+                "delivery_request":{"id":l.id,"status":l.status},
+                "jobrequest":{'resturant_name':job.resturant_name,"delivery_address":job.delivery_address,},
+            }
+            k.append(kd)
+        print(kd)
+
+        return Response({'status': True,'job':list(k)})
