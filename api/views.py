@@ -282,7 +282,7 @@ class Profile(GenericAPIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
         k = job.values()
-        return Response({'status': True,'job':list(k),'vehicle':list(veh.values())})
+        return Response({'status': True,'driver':list(k),'vehicle':list(veh.values())})
         
 
 
