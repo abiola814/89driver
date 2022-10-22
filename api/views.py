@@ -529,9 +529,9 @@ class DriverRequests(GenericAPIView):
                     })
 class DriverRequestsCompleted(GenericAPIView):
     '''
-    api for get the driver request and completed job 
+    api for get the driver completed job 
     only pass the status of request or completed to get result for both delivery request and delivery completed
-    {status:"Request"} or {status:"Completed"}
+    
     '''
 
     serializer_class = DriverSerializers
@@ -552,10 +552,13 @@ class DriverRequestsCompleted(GenericAPIView):
         for l in driverrequest:
             job=JobRequest.objects.get(id=l.jobrequest.id)
             kd= {
-                "delivery_request":{"id":l.id,"status":l.status},
-                "jobrequest":{'resturant_name':job.resturant_name,"delivery_address":job.delivery_address,},
+                "id":l.id,
+                "status":l.status,
+                'resturant_name':job.resturant_name,
+                "delivery_address":job.delivery_address
+
             }
             k.append(kd)
-        print(kd)
+        
 
         return Response({'status': True,'job':list(k)})
