@@ -527,6 +527,11 @@ class DriverRequests(GenericAPIView):
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Completed.'
                     })
+        else:
+            return Response({
+                        'status': False, 'detail': 'Status not given'
+                    })
+
 class DriverRequestsCompleted(GenericAPIView):
     '''
     api for get the driver completed job 
