@@ -280,9 +280,24 @@ class Profile(GenericAPIView):
             print(veh)
         except Vehicle.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        k = job.values()
-        return Response({'status': True,'driver':list(k),'vehicle':list(veh.values())})
+
+        k=[]
+        kd= {
+                "id":ve.id,
+                "driver_number":ve.driver_number,
+                'first_name ':ve.first_name,
+                "last_name":ve.last_name,
+                "email":ve.email,
+                "ssn":ve.ssn,
+                "vehicle_color":ve.vehicle.color,
+                "make":ve.vehicle.make,
+                'model':ve.vehicle.model,
+                "year":ve.vehicle.year
+
+
+            }
+        k.append(kd)
+        return Response({'status': True,'driver':list(k)})
         
 
 
