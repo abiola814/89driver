@@ -297,7 +297,7 @@ class Profile(GenericAPIView):
 
             }
         k.append(kd)
-        return Response({'status': True,'driver':list(kd)})
+        return Response({'status': True,'driver':kd})
         
 
 
