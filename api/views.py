@@ -542,6 +542,16 @@ class DriverRequests(GenericAPIView):
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Completed.'
                     })
+        elif status=='Declined':
+            job.status='cancelled'
+            job.save()
+            tempdata = {'status':'Declined'}
+            serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({
+                        'status': True, 'detail': 'Request succesfully changed to Declined.'
+                    })
         else:
             return Response({
                         'status': False, 'detail': 'Status not given'
