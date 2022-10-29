@@ -24,7 +24,10 @@ class ValidatePhoneSendOTP(GenericAPIView):
     first coming phone numbers 
     
     pls note this api is the first api you call before register
-
+     {
+        "email": "example@gmail.com",
+        'phone":"+2348101464914"
+     }
 
     '''
 
@@ -74,7 +77,17 @@ class Register(GenericAPIView):
 
 
 
-    '''Takes phone and a email and creates a new user only if otp was verified and phone is new'''
+    '''Takes phone and email and creates a new user only if otp was verified 
+    and only new phone can register
+         {
+        "email": "example@gmail.com",
+        'phone":"+2348101464914",
+        "otp" : "9400"
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
 
 
     serializer_class = CreateUserSerializer
@@ -141,6 +154,11 @@ class ValidateLogin(GenericAPIView):
 
     else
      it  send an otp
+
+    {
+        'phone":"+2348101464914"
+     }
+
     """
 
     def post(self, request, *args, **kwargs):
@@ -179,6 +197,12 @@ class LoginAPI(KnoxLoginView,GenericAPIView):
     """
     this api takes the user phone number and otp 
     it check if the otp is correct if not send a false status
+
+     {
+        'phone":"+2348101464914",
+        "otp" : "9400"
+         }  
+         return the auth token
     """
     serializer_class = LoginUserSerializer
     permission_classes = (permissions.AllowAny,)
@@ -217,6 +241,22 @@ class ValidateDriver(GenericAPIView):
     this api post check the driver information 
     and create it
     if it is correct
+
+        {
+        email: example@gmail.com
+        last_name : "name"
+        middle_name	: "name"
+        ssn	: "7757777"
+        driver_number:"858588g88"	
+        first_name	:"fjjffj"
+        state:"jrjjjjg"
+        
+        }] 
+
+
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
     """
     serializer_class = DriverSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -249,6 +289,12 @@ class ValidateDriver(GenericAPIView):
             return Response({
                         'status': True, 'detail': 'Driver successfully.'
                     })
+
+    """
+        this api post check the driver information 
+        and create it
+        if it is correct
+        """
     def get(self,request):
         user= request.user
         try:
@@ -262,7 +308,8 @@ class ValidateDriver(GenericAPIView):
         
 class Profile(GenericAPIView):
     '''
-    this api GET profile
+    this api GET the driver profile 
+
 
     '''
     permission_classes = (permissions.IsAuthenticated,)
@@ -304,7 +351,19 @@ class Profile(GenericAPIView):
 class ValidateVehicle(GenericAPIView):
     '''
     this api check the vehincle info and save it
+       {
+        "model": "example",
+        'year":"2033",
+        "color" : "red",
+        "make":"tesla"
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
     '''
+
+
+
     serializer_class = VehicleSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
@@ -444,7 +503,7 @@ class activerequest(GenericAPIView):
                     ) 
 
 class Deliveredrequest(GenericAPIView):
-    '''S
+    '''
     api for updating the request
 
     '''
@@ -481,9 +540,29 @@ class Deliveredrequest(GenericAPIView):
 
 class DriverRequests(GenericAPIView):
     '''
-    api for get the driver request and completed job 
-    only pass the status of request or completed to get result for both delivery request and delivery completed
-    {status:"Request"} or {status:"Completed"}
+    use the get request to get the driver request
+
+    use the patch request to accept or declined the request from the owber
+    the id pass in the patch is from the id that was gotten from the get request
+
+    to accept
+    {
+        id:"48848489494949"
+        status:"Accept"
+    }
+    to declined
+
+        {
+        id:"48848489494949"
+        status:"Declined"
+    }
+
+    to complete
+
+        {
+        id:"48848489494949"
+        status:"Completed"
+    }
     '''
 
     serializer_class = DriverSerializers
@@ -494,7 +573,7 @@ class DriverRequests(GenericAPIView):
         status = 'Request'
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
-        driverrequest= DriverRequest.objects.filter(status=status)
+        driverrequest= DriverRequest.objects.filter(status=status,carier=driver_id.id)
         # job = JobRequest.objects.filter(id=driverrequest.jobrequest)
         # print(driver_id)
 
@@ -560,7 +639,7 @@ class DriverRequests(GenericAPIView):
 class DriverRequestsCompleted(GenericAPIView):
     '''
     api for get the driver completed job 
-    only pass the status of request or completed to get result for both delivery request and delivery completed
+   
     
     '''
 
