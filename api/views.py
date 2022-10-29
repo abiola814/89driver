@@ -1,4 +1,4 @@
-from functools import partial
+
 import requests
 from django.contrib.auth import login
 from django.db.models import Q
@@ -16,21 +16,20 @@ from rest_framework.generics import ListCreateAPIView
 from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest
 from .serializer import CreateUserSerializer, DriverSerializers,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializers
 from .utils import otp_generator, password_generator, phone_validator
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
+
+        
 
 class ValidatePhoneSendOTP(GenericAPIView):
-    '''
-    This class view takes phone number and email and if it doesn't exists already then it sends otp for
-    first coming phone numbers 
+
+
     
-    pls note this api is the first api you call before register
-     {
-        "email": "example@gmail.com",
-        'phone":"+2348101464914"
-     }
-
-    '''
-
+    test_param =openapi.Parameter("email",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary='validating of register',manual_parameters=[test_param,phone_param],operation_description='  This class view takes phone number and email and if it does not exists already then it sends otp forfirst coming phone numbers'
+    ,responses={200:'successfull','status':"true",'detail':'infomation of what happened'})
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone')
         if phone_number:
@@ -91,6 +90,11 @@ class Register(GenericAPIView):
 
 
     serializer_class = CreateUserSerializer
+    test_param =openapi.Parameter("email",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' register and save a user',manual_parameters=[test_param,phone_param,otp_param],operation_description='Takes phone and email and creates a new user only if otp was verified and only new phone can register'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
     def post(self, request, *args, **kwargs):
         phone = request.data.get('phone', False)
         email = request.data.get('email', False)
@@ -146,20 +150,11 @@ class Register(GenericAPIView):
             })
 
 class ValidateLogin(GenericAPIView):
-    """
-    This class view takes phone number in which user want to login with
-    and validate it if it exist in the database
 
-    if not it ask you to register
 
-    else
-     it  send an otp
-
-    {
-        'phone":"+2348101464914"
-     }
-
-    """
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' validate user existence',manual_parameters=[phone_param],operation_description='    This class view takes phone number in which user want to login withand validate it if it exist in the database'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
     def post(self, request, *args, **kwargs):
         phone_number = request.data.get('phone')
@@ -194,20 +189,14 @@ class ValidateLogin(GenericAPIView):
 
 class LoginAPI(KnoxLoginView,GenericAPIView):
 
-    """
-    this api takes the user phone number and otp 
-    it check if the otp is correct if not send a false status
-
-     {
-        'phone":"+2348101464914",
-        "otp" : "9400"
-         }  
-         return the auth token
-    """
     serializer_class = LoginUserSerializer
     permission_classes = (permissions.AllowAny,)
 
 
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' validate user existence',manual_parameters=[phone_param,otp_param],operation_description='    this api takes the user phone number and otp it check if the otp is correct if not send a false status'
+    ,responses={200:'successfull','response description':" return the auth token"})
 
     def post(self, request, format=None):
         phone = request.data.get('phone')
@@ -237,31 +226,20 @@ class LoginAPI(KnoxLoginView,GenericAPIView):
 
 
 class ValidateDriver(GenericAPIView):
-    """
-    this api post check the driver information 
-    and create it
-    if it is correct
 
-        {
-        email: example@gmail.com
-        last_name : "name"
-        middle_name	: "name"
-        ssn	: "7757777"
-        driver_number:"858588g88"	
-        first_name	:"fjjffj"
-        state:"jrjjjjg"
-        
-        }] 
-
-
-
-         return a status True if the request went well with detail of what happened
-         retuen false if the process did not go well note and detail of what happened is attached to this request
-    """
     serializer_class = DriverSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
 
+    test_param =openapi.Parameter("email",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    last =openapi.Parameter("last_name",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    first =openapi.Parameter("first_name",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    state =openapi.Parameter("state",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    middle =openapi.Parameter("middle_name",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    phone_param =openapi.Parameter("ssn",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("driver_number",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' background check api',manual_parameters=[test_param,phone_param,otp_param,last,middle,state,first],operation_description='    this api post check the driver information and create it if it is correct'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
 
     def post(self, request, format=None):
@@ -307,13 +285,22 @@ class ValidateDriver(GenericAPIView):
 
         
 class Profile(GenericAPIView):
-    '''
-    this api GET the driver profile 
-
-
-    '''
+ 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
+    
+    @swagger_auto_schema(operation_summary=' getting of driver api',operation_description=' this api GET the driver profile '
+    ,responses={200:'successfull',  "id": 'string',
+                "driver_number":'string',
+                'first_name ':'string',
+                "last_name":'string',
+                "email":'string',
+                "ssn":'string',
+                "vehicle_color":'string',
+                "make":'string',
+                'model':'string',
+                "year":'string'})
+
     def get(self,request):
         user= request.user
         try:
