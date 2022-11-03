@@ -152,6 +152,77 @@ class Register(GenericAPIView):
                 'status' : False,
                 'detail' : 'Either phone number or email was not recieved in Post request'
             })
+class ownerRegister(GenericAPIView):
+
+
+
+    '''Takes phone and creates a new owner only if otp was verified 
+    and only new phone can register
+         {
+        'phone":"+2348101464914",
+        "otp" : "9400"
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
+
+
+    serializer_class = CreateUserSerializer
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' register and save a user',manual_parameters=[phone_param,otp_param],operation_description='Takes phone and email and creates a new user only if otp was verified and only new phone can register'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+    def post(self, request, *args, **kwargs):
+        phone = request.data.get('phone', False)
+        otp = request.data.get('otp', False)
+
+        if phone :
+            phone = str(phone)
+            user = User.objects.filter(phone__iexact = phone)
+            if user.exists():
+                return Response({'status': False, 'detail': 'Phone Number already have account associated. Kindly sign in'})
+
+ 
+            else:
+                old = PhoneOTP.objects.filter(phone__iexact = phone)
+                if old.exists():
+                    sotp=PhoneOTP.objects.get(phone__iexact = phone)
+                    save_otp=sotp.otp
+                    print(save_otp)
+                    if otp==save_otp:
+                        Temp_data = {'phone': phone, 'email': 'email@gmail.com'}
+
+                        serializer = CreateUserSerializer(data=Temp_data)
+                        serializer.is_valid(raise_exception=True)
+                        user = serializer.save()
+                        user.save()
+                        save_otps = User.objects.get(phone=phone)
+                        save_otps.otp=save_otp
+                        save_otps.save()
+                        return Response({
+                            'status' : True, 
+                            'detail' : 'Congrts, user has been created successfully.'
+                        })
+                    else:
+                        return Response({
+
+                            'status': False,
+                            'detail': 'invalid otp'
+
+                        })
+                else:
+                    return Response({
+                    'status' : False,
+                    'detail' : 'Phone number not recognised. Kindly request a new otp with this number'
+                })
+                    
+
+        else:
+            return Response({
+                'status' : False,
+                'detail' : 'Either phone number or email was not recieved in Post request'
+            })
 
 class ValidateLogin(GenericAPIView):
 
@@ -529,6 +600,38 @@ class Deliveredrequest(GenericAPIView):
         return Response(
                         RequestSerializer(job,many=True).data
                     ) 
+
+class OwnerEmail(GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
+    '''take in email of owner
+         {
+        'email":"jjk@gmail.com",
+
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
+
+
+    serializer_class = CreateUserSerializer
+    phone_param =openapi.Parameter("email",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(operation_summary=' owner email uppdate',manual_parameters=[phone_param],operation_description='take in email of owneremail:jjk@gmail.com,'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
+    def patch(self,request,format=None):
+        user= request.user
+        email= request.data.get('email')
+        user_email = User.objects.filter(email = email)
+        if user_email.exists():
+            return Response({'status': False, 'detail': 'Email already have account associated. Kindly sign in'})
+        user.email=email
+        user.save()
+        return Response({'status': True, 'detail': 'Email succesfull added'})
+
 
 
 

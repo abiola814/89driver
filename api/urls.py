@@ -17,6 +17,8 @@ urlpatterns = [
         path('driverrequest/',views.DriverRequests.as_view(),name='job' ),
                 path('drivercompleted/',views.DriverRequestsCompleted.as_view(),name='job' ),
     path('driverprofile/',views.Profile.as_view(),name='job' ),
+        path('registerowner/',views.ownerRegister.as_view(),name='job' ),
+            path('owneremailupdate/',views.OwnerEmail.as_view(),name='job' ),
 
         path('deliveredrequest/',views.Deliveredrequest.as_view(),name='job' ),
 
