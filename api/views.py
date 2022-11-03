@@ -40,7 +40,11 @@ class ValidatePhoneSendOTP(GenericAPIView):
                  # logic to send the otp and store the phone number and that otp in table. 
             else:
                 otp = otp_generator()
-                send_otp=MessageHandler(phone,otp).send_otp()
+                try:
+                    send_otp=MessageHandler(phone,otp).send_otp()
+                except:
+                    return Response({'status': False, 'detail': ' unable to send otp check the number again '})
+
 
                 print(send_otp)
                 print(phone, otp)
@@ -166,7 +170,10 @@ class ValidateLogin(GenericAPIView):
                  # logic to send the otp and store the phone number and that otp in table. 
             else:
                 otp = otp_generator()
-                send_otp=MessageHandler(phone,otp).send_otp()
+                try:
+                    send_otp=MessageHandler(phone,otp).send_otp()
+                except:
+                    return Response({'status': False, 'detail': ' unable to send otp check the number again '})
                 print(phone, otp)
                 if send_otp:
                     otp = str(otp)
@@ -658,3 +665,4 @@ class DriverRequestsCompleted(GenericAPIView):
         
 
         return Response({'status': True,'job':list(k)})
+        # dns1.p02.nsone.net
