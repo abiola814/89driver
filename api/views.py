@@ -466,7 +466,11 @@ class Validateowner(GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
 
-
+    phone_param =openapi.Parameter("resturant_name",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    phones_param =openapi.Parameter("resturant_location",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("name",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' create owner profile',manual_parameters=[phone_param,phones_param,otp_param],operation_description='    this api create a database for the owner with he or her resturant information'
+    ,responses={200:'successfull','response description':" return the description details"})
     def post(self, request, format=None):
         email = request.user.email
         print(email)
