@@ -501,7 +501,7 @@ class Createjob(ListCreateAPIView):
     serializer_class = JobRequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
-    @swagger_auto_schema(method ='post',operation_summary=' resturant sending food',operation_description="    this api is used to create a food request ",responses={200:'successfull',  "id": 'string',
+    @swagger_auto_schema(methods=['post'],operation_summary=' resturant sending food',operation_description="    this api is used to create a food request ",responses={200:'successfull',  "id": 'string',
                 "pickup_lat":'float',
                 'pickup_long ':'float',
                 "delivery_address":'string',
@@ -529,7 +529,7 @@ class Createjob(ListCreateAPIView):
         return Response({
                     'status': True, 'detail': 'Request succesfully created.'
                 })
-    @swagger_auto_schema(method ='get',operation_summary=' request for for created order',operation_description="result of all created order that was rejected by driver",responses={200:'successfull','description':"result of all created order that was rejected by driver"})
+    @swagger_auto_schema(methods=['get'],operation_summary=' request for for created order',operation_description="result of all created order that was rejected by driver",responses={200:'successfull','description':"result of all created order that was rejected by driver"})
     def get(self,request):
         user= request.user
         try:
