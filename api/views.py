@@ -496,11 +496,19 @@ class Validateowner(GenericAPIView):
 
 class Createjob(ListCreateAPIView):
     '''
-    this api is used to create request of the resturant owner 
+    this api is used to create a food request 
     '''
     serializer_class = JobRequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
+    @swagger_auto_schema(method ='post',operation_summary=' resturant sending food',operation_description="    this api is used to create a food request ",responses={200:'successfull',  "id": 'string',
+                "pickup_lat":'float',
+                'pickup_long ':'float',
+                "delivery_address":'string',
+                "delivery_lat":'float',
+                "delivery_long":'float',
+                "pickup_address":'string',
+                "resturant_name":'string',})
     def post(self, request,format=None):
         pickup_lat= request.data.get('pickup_lat')
         pickup_long = request.data.get("pickup_long")
@@ -521,7 +529,7 @@ class Createjob(ListCreateAPIView):
         return Response({
                     'status': True, 'detail': 'Request succesfully created.'
                 })
-
+    @swagger_auto_schema(method ='get',operation_summary=' request for for created order',operation_description="result of all created order that was rejected by driver",responses={200:'successfull','description':"result of all created order that was rejected by driver"})
     def get(self,request):
         user= request.user
         try:
@@ -538,14 +546,23 @@ class Createjob(ListCreateAPIView):
 
 
 class activerequest(GenericAPIView):
-    '''
-    api for updating the request
 
-    '''
+
     serializer_class = RequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
+    @swagger_auto_schema(method='patch',operation_summary=' resturant sending food',operation_decription="""  api  for accepting the driver has picked up the order which takes id and status
+    
+    example 
 
+    {"id" : "93847774774848",
+        "status": "pending"
+    }
+    
+    note that the id is gotten from the get request
+    """ ,responses={200:'successfull',}
+     
+    )
     def patch(self,request,format=None):
         user= request.user
         id= request.data.get('id')
@@ -560,7 +577,9 @@ class activerequest(GenericAPIView):
                 })
 
 
-
+    @swagger_auto_schema(method='get',operation_summary=' show accepted job from driver',operation_decription=" show all accepted job "  ,responses={200:'successfull',}
+     
+    )
     def get(self,request,format=None):
         user= request.user
         try:
@@ -572,14 +591,21 @@ class activerequest(GenericAPIView):
                     ) 
 
 class Deliveredrequest(GenericAPIView):
-    '''
-    api for updating the request
 
-    '''
+
     serializer_class = RequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
-
+    @swagger_auto_schema(method='patch',operation_summary='delivered order by driver',operation_decription="""  api  for accepting the driver has delivered the order which takes id and status
+    
+    {"id" : "93847774774848",
+        "status": "completed"
+    }
+    
+    note that the id is gotten from the get request
+    """ ,responses={200:'successfull',}
+     
+    )
     def patch(self,request,format=None):
         user= request.user
         id= request.data.get('id')
@@ -594,11 +620,59 @@ class Deliveredrequest(GenericAPIView):
                 })
 
 
+    @swagger_auto_schema(method='get',operation_summary=' show delivered job from driver',operation_decription=" show all delivered job "  ,responses={200:'successfull',}
+     
+    )
 
     def get(self,request,format=None):
         user= request.user
         try:
             job= JobRequest.objects.filter(owner=user.id,status='delivered')
+        except JobRequest.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(
+                        RequestSerializer(job,many=True).data
+                    ) 
+
+class Completeddrequest(GenericAPIView):
+
+
+    serializer_class = RequestSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    @swagger_auto_schema(method='patch',operation_summary='rate delivered order by driver',operation_decription="""  api  for rating the driver please not this api is under development
+    
+    {"id" : "93847774774848",
+        "rating": "comment"
+        "star" :"3"
+    }
+    
+    note that the id is gotten from the get request
+    """ ,responses={200:'successfull',}
+     
+    )
+    def patch(self,request,format=None):
+        user= request.user
+        id= request.data.get('id')
+        
+        job= JobRequest.objects.get(id=id)
+        tempdata = {'status':'completed'}
+        serializer = RequestSerializer(job,data=tempdata,partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+                    'status': True, 'detail': 'Request succesfully changed to completed.'
+                })
+
+
+    @swagger_auto_schema(method='get',operation_summary=' show completed job from driver',operation_decription=" show all completed job "  ,responses={200:'successfull',}
+     
+    )
+
+    def get(self,request,format=None):
+        user= request.user
+        try:
+            job= JobRequest.objects.filter(owner=user.id,status='completed')
         except JobRequest.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(
