@@ -551,7 +551,7 @@ class activerequest(GenericAPIView):
     serializer_class = RequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
-    @swagger_auto_schema(operation_summary=' resturant sending food',operation_decription="""  api  for accepting the driver has picked up the order which takes id and status
+    @swagger_auto_schema(operation_summary=' resturant sending food',operation_description="""  api  for accepting the driver has picked up the order which takes id and status
     
     example 
 
@@ -577,7 +577,7 @@ class activerequest(GenericAPIView):
                 })
 
 
-    @swagger_auto_schema(operation_summary=' show accepted job from driver',operation_decription=" show all accepted job "  ,responses={200:'successfull',}
+    @swagger_auto_schema(operation_summary=' show accepted job from driver',operation_description=" show all accepted job "  ,responses={200:'successfull',}
      
     )
     def get(self,request,format=None):
@@ -596,7 +596,7 @@ class Deliveredrequest(GenericAPIView):
     serializer_class = RequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
-    @swagger_auto_schema(operation_summary='delivered order by driver',operation_decription="""  api  for accepting the driver has delivered the order which takes id and status
+    @swagger_auto_schema(operation_summary='delivered order by driver',operation_description="""  api  for accepting the driver has delivered the order which takes id and status
     
     {"id" : "93847774774848",
         "status": "completed"
@@ -620,7 +620,7 @@ class Deliveredrequest(GenericAPIView):
                 })
 
 
-    @swagger_auto_schema(operation_summary=' show delivered job from driver',operation_decription=" show all delivered job "  ,responses={200:'successfull',}
+    @swagger_auto_schema(operation_summary=' show delivered job from driver',operation_description=" show all delivered job "  ,responses={200:'successfull',}
      
     )
 
@@ -634,13 +634,13 @@ class Deliveredrequest(GenericAPIView):
                         RequestSerializer(job,many=True).data
                     ) 
 
-class Completeddrequest(GenericAPIView):
+class Completedrequest(GenericAPIView):
 
 
     serializer_class = RequestSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
-    @swagger_auto_schema(operation_summary='rate delivered order by driver',operation_decription="""  api  for rating the driver please not this api is under development
+    @swagger_auto_schema(operation_summary='rate delivered order by driver',operation_description="""  api  for rating the driver please not this api is under development
     
     {"id" : "93847774774848",
         "rating": "comment"
@@ -665,7 +665,7 @@ class Completeddrequest(GenericAPIView):
                 })
 
 
-    @swagger_auto_schema(operation_summary=' show completed job from driver',operation_decription=" show all completed job "  ,responses={200:'successfull',}
+    @swagger_auto_schema(operation_summary=' show completed job from driver',operation_description=" show all completed job "  ,responses={200:'successfull',}
      
     )
 

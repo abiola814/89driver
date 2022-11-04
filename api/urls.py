@@ -21,5 +21,7 @@ urlpatterns = [
             path('owneremailupdate/',views.OwnerEmail.as_view(),name='job' ),
 
         path('deliveredrequest/',views.Deliveredrequest.as_view(),name='job' ),
+        path('completedrequest/',views.Completedrequest.as_view(),name='job' ),
+
 
 ]
