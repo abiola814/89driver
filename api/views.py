@@ -557,8 +557,6 @@ class driverlocation(GenericAPIView):
 
 class driveronline(GenericAPIView):
 
-
-    serializer_class = VehicleSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
     otp_param =openapi.Parameter("online",openapi.IN_QUERY,type=openapi.TYPE_BOOLEAN)
