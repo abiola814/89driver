@@ -14,7 +14,7 @@ from .message import MessageHandler
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest
-from .serializer import CreateUserSerializer, DriverSerializers,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializers
+from .serializer import CreateUserSerializer, CreateAdminUserSerializer,DriverSerializers,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializers
 from .utils import otp_generator, password_generator, phone_validator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -146,6 +146,60 @@ class Register(GenericAPIView):
                     'detail' : 'Phone number not recognised. Kindly request a new otp with this number'
                 })
                     
+
+        else:
+            return Response({
+                'status' : False,
+                'detail' : 'Either phone number or email was not recieved in Post request'
+            })
+
+
+
+class AdminRegister(GenericAPIView):
+
+
+
+    '''Takes phone and email and creates a new user only if otp was verified 
+    and only new phone can register
+         {
+        
+        'phone":"+2348101464914",
+        "password" : "9400"
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
+
+
+    serializer_class = CreateAdminUserSerializer
+
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' register an admin user',manual_parameters=[phone_param,otp_param],operation_description='Takes phone and email and creates a new user only if otp was verified and only new phone can register'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+    def post(self, request, *args, **kwargs):
+        phone = request.data.get('phone', False)
+        password = request.data.get('password', False)
+
+        if phone:
+            phone = str(phone)
+            user = User.objects.filter(phone__iexact = phone)
+        
+            if user.exists():
+                return Response({'status': False, 'detail': 'Phone Number already have account associated. Kindly sign in'})
+            else:
+                old = PhoneOTP.objects.filter(phone__iexact = phone)
+                Temp_data = {'phone': phone, 'password': password}
+
+                serializer = CreateAdminUserSerializer(data=Temp_data)
+                serializer.is_valid(raise_exception=True)
+                user = serializer.save()
+                user.save()
+                return Response({
+                    'status' : True, 
+                    'detail' : 'Congrts, user has been created successfully.'
+                })
 
         else:
             return Response({
@@ -301,6 +355,26 @@ class LoginAPI(KnoxLoginView,GenericAPIView):
         login(request, user,backend='api.auth_backend.PasswordlessAuthBackend2')
         return super().post(request, format=None)
         
+class AdminLoginAPI(KnoxLoginView,GenericAPIView):
+
+    serializer_class = LoginUserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+
+    phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' login admin user',manual_parameters=[phone_param,otp_param],operation_description='    this api takes the user phone number and password to login'
+    ,responses={200:'successfull','response description':" return the auth token"})
+
+    def post(self, request, format=None):
+        phone = request.data.get('phone')
+        password = request.data.get('password')
+        serializer = LoginUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+            
+        login(request, user)
+        return super().post(request, format=None)
 
 
 class ValidateDriver(GenericAPIView):
@@ -456,6 +530,68 @@ class ValidateVehicle(GenericAPIView):
             return Response({
                         'status': True, 'detail': 'Vehicle successfully added.'
                     })
+
+class driverlocation(GenericAPIView):
+    '''
+    this api check the vehincle info and save it
+       {
+        "model": "example",
+        'year":"2033",
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
+
+
+
+    serializer_class = VehicleSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+ 
+
+    def patch(self, request, format=None):
+        lat = request.data.get('lat')
+        long = request.data.get('long')
+        driver = Drivers.objects.get(user=request.user)
+        driver.driver_lat=lat
+        driver.driver_long=long
+        driver.save()
+        return Response({
+                        'status': True, 'detail': 'updated driver locationapi.'
+                    })
+
+class driveronline(GenericAPIView):
+    '''
+    this api check the vehincle info and save it
+       {
+        "model": "example",
+        'year":"2033",
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
+
+
+
+    serializer_class = VehicleSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+ 
+
+    def patch(self, request, format=None):
+        lat = request.data.get('online')
+        driver = Drivers.objects.get(user=request.user)
+        if str(lat) == "true":
+            driver.online= True
+        else:
+            driver.online=False
+        driver.save()
+        return Response({
+                        'status': True, 'detail': 'online profile updated.'
+                    })
+
 
 
 class Validateowner(GenericAPIView):
@@ -761,7 +897,9 @@ class DriverRequests(GenericAPIView):
                 "id":l.id,
                 "status":l.status,
                 'resturant_name':job.resturant_name,
-                "delivery_address":job.delivery_address
+                "delivery_address":job.pickup_address,
+                "resturant_lat":job.pickup_lat,
+                "resturant_long":job.pickup_long
             }
             k.append(kd)
         

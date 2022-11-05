@@ -187,6 +187,7 @@ class Drivers(models.Model):
     first_count     =   models.IntegerField(default=0, help_text='It is 0, if the user is totally new and 1 if the user has saved his standard once' )
     driver_lat      =   models.FloatField(default=0)
     driver_long     =   models.FloatField(default=0)
+    online          =   models.BooleanField(default=False)
     def __str__(self):
         return str(self.user) 
 
@@ -231,10 +232,10 @@ class JobRequest(models.Model):
     id                  =   models.UUIDField(primary_key=True,default=uuid4,editable=False)
     owner               =   models.ForeignKey(User,on_delete=models.CASCADE)
     description         =   models.CharField(max_length=255,blank = True, null = True)
-    delivery_address    =   models.CharField(max_length=255)
-    delivery_lat        =   models.CharField(max_length=15)
-    delivery_long       =   models.CharField(max_length=10)
-    pickup_address      =   models.CharField(max_length=255)
+    delivery_address    =   models.CharField(max_length=255,blank = True, null = True)
+    delivery_lat        =   models.CharField(max_length=15,blank = True, null = True)
+    delivery_long       =   models.CharField(max_length=10,blank = True, null = True)
+    pickup_address      =   models.CharField(max_length=255,blank = True, null = True)
     pickup_lat          =   models.FloatField(default=0)
     pickup_long         =   models.FloatField(default=0)
     resturant_name      =   models.CharField(max_length = 900, blank = True, null = True)

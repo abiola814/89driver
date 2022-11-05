@@ -20,6 +20,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
+class CreateAdminUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('phone', 'password')
+
+
+    def create(self, validated_data):
+        user = User.objects.create_staffuser(**validated_data)
+        return user
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -38,7 +47,7 @@ class LoginUserSerializer(serializers.Serializer):
     def validate(self, attrs):
         phone = attrs.get('phone')
 
-        if phone and email:
+        if phone:
             if User.objects.filter(phone=phone).exists():
                 user = authenticate(request=self.context.get('request'),
                                     phone=phone)
