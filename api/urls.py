@@ -22,6 +22,8 @@ urlpatterns = [
 
         path('deliveredrequest/',views.Deliveredrequest.as_view(),name='job' ),
         path('completedrequest/',views.Completedrequest.as_view(),name='job' ),
+        path('driveronline/',views.driveronline.as_view(),name='job' ),
+        path('driverlocation/',views.driverlocation.as_view(),name='job' ),
 
 
 ]

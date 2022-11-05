@@ -532,23 +532,17 @@ class ValidateVehicle(GenericAPIView):
                     })
 
 class driverlocation(GenericAPIView):
-    '''
-    this api check the vehincle info and save it
-       {
-        "model": "example",
-        'year":"2033",
-         }  
-
-         return a status True if the request went well with detail of what happened
-         retuen false if the process did not go well note and detail of what happened is attached to this request
-    '''
 
 
 
-    serializer_class = VehicleSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
  
+    phone_param =openapi.Parameter("lat",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("long",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' driver location api',manual_parameters=[phone_param,otp_param],operation_description='    this api update the driver current location'
+    ,responses={200:'successfull','response description':""" 'status': True, 'detail': 'updated driver location api.'"""})
+
 
     def patch(self, request, format=None):
         lat = request.data.get('lat')
@@ -562,23 +556,15 @@ class driverlocation(GenericAPIView):
                     })
 
 class driveronline(GenericAPIView):
-    '''
-    this api check the vehincle info and save it
-       {
-        "model": "example",
-        'year":"2033",
-         }  
-
-         return a status True if the request went well with detail of what happened
-         retuen false if the process did not go well note and detail of what happened is attached to this request
-    '''
-
 
 
     serializer_class = VehicleSerializer
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
- 
+    otp_param =openapi.Parameter("online",openapi.IN_QUERY,type=openapi.TYPE_BOOLEAN)
+    @swagger_auto_schema(operation_summary=' driver online state api',manual_parameters=[otp_param],operation_description="""this api update the driver ONLINE STATUS  {"online":"true"} """
+    ,responses={200:'successfull','response description':"""       'status': True, 'detail': 'online profile updated.''"""})
+
 
     def patch(self, request, format=None):
         lat = request.data.get('online')
