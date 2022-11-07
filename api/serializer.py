@@ -92,7 +92,7 @@ class JobRequestSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = JobRequest
-        fields = ('id','status','pickup_long','pickup_lat','delivery_lat','delivery_long','pickup_address','resturant_name','distance','duration','price','owner')
+        fields = ('id','status','pickup_long','carier','pickup_lat','delivery_lat','delivery_long','pickup_address','resturant_name','distance','duration','price','owner')
 
 
 class RequestSerializer(serializers.ModelSerializer):

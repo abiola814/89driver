@@ -188,6 +188,8 @@ class Drivers(models.Model):
     driver_lat      =   models.FloatField(default=0)
     driver_long     =   models.FloatField(default=0)
     online          =   models.BooleanField(default=False)
+    rating          =   models.FloatField(default=0)
+    totaldelivery   =   models.IntegerField(default=0)
     def __str__(self):
         return str(self.user) 
 
@@ -248,6 +250,17 @@ class JobRequest(models.Model):
 
     def __str__(self) -> str:
         return f"{self.resturant_name} {self.delivery_address}"
+
+class Rating(models.Model):
+    id          =   models.UUIDField(primary_key=True,default=uuid4,editable=False)
+    jobrequest  =   models.ForeignKey(JobRequest,related_name='jobrating',on_delete=models.CASCADE,)
+    carier      =   models.ForeignKey(Drivers,related_name='driverrating',on_delete=models.CASCADE,null=True,blank=True)
+    comment     =   models.CharField(max_length=100)
+    rating      =   models.IntegerField(default=0)
+
+
+    def __str__(self) -> str:
+        return self.comment   
 
 class DriverRequest(models.Model):
 

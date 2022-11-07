@@ -48,4 +48,4 @@ urlpatterns = [
                                        cache_timeout=0), name='schema-redoc'),
         path('social_auth/', include(('social_auth.urls', 'social_auth'),
                                  namespace="social_auth")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,7 +13,7 @@ from rest_framework.generics import GenericAPIView
 from .message import MessageHandler
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
-from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest
+from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest,Rating
 from .serializer import CreateUserSerializer, CreateAdminUserSerializer,DriverSerializers,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializers
 from .utils import otp_generator, password_generator, phone_validator
 from drf_yasg import openapi
@@ -484,6 +484,28 @@ class Profile(GenericAPIView):
             }
         k.append(kd)
         return Response({'status': True,'driver':kd})
+
+    def patch(self,request):
+        driver= Drivers.objects.get(user=request.user)
+        if request.files.get('image'):
+            image = request.FILES.get('image')
+            driver.image=image
+        if request.data.get('email'):
+            email = request.data.get('email')
+            driver.email= email
+        try:
+            driver.save()
+        except:
+                return Response({
+                    'status': False, 'detail': 'something when wrong unable to save'
+                })
+        
+
+        return Response({
+                        'status': True, 'detail': 'profile successfully updated.'
+                    })
+        
+
         
 
 
@@ -624,23 +646,23 @@ class Createjob(ListCreateAPIView):
     @swagger_auto_schema(operation_summary=' resturant sending food',operation_description="    this api is used to create a food request ",responses={200:'successfull',  "id": 'string',
                 "pickup_lat":'float',
                 'pickup_long ':'float',
-                "delivery_address":'string',
-                "delivery_lat":'float',
-                "delivery_long":'float',
-                "pickup_address":'string',
-                "resturant_name":'string',})
+                'driver_id':"string"
+                })
     def post(self, request,format=None):
+        driver_id =request.data.get("driver_id")
+        driver= Drivers.objects.get(id= driver_id)
         pickup_lat= request.data.get('pickup_lat')
         pickup_long = request.data.get("pickup_long")
-        delivery_address= request.data.get("delivery_address")
-        delivery_lat = request.data.get("delivery_lat")
-        delivery_long = request.data.get("delivery_long")
-        pickup_address= request.data.get("pickup_address")
-        resturant_name = request.data.get("resturant_name")
+
+        delivery_address= 0
+        delivery_lat = 0
+        delivery_long = 0
+        pickup_address= request.user.ownerprofiles.resturant_location
+        resturant_name = request.user.ownerprofiles.resturant_name
         owner=request.user
         temp_data = {'owner': owner.id,'pickup_address':pickup_address,'pickup_lat':pickup_lat,'delivery_address':delivery_address,
         'delivery_lat':delivery_lat,'delivery_long':delivery_long,'resturant_name':resturant_name,
-        'pickup_long':pickup_long
+        'pickup_long':pickup_long,'carier':driver.id
         }
         serializer = JobRequestSerializer(data=temp_data)
         serializer.is_valid(raise_exception=True)
@@ -661,8 +683,16 @@ class Createjob(ListCreateAPIView):
                     )
         
         
-
-
+class nearbydriver(GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def get(self,request,format=None):
+        user= request.user
+        drivers = Drivers.objects.filter(online=True)
+        driver=drivers.values()
+        return Response({
+                     'nearbydriver':driver}
+                    ) 
 
 
 class activerequest(GenericAPIView):
@@ -763,8 +793,8 @@ class Completedrequest(GenericAPIView):
     @swagger_auto_schema(operation_summary='rate delivered order by driver',operation_description="""  api  for rating the driver please not this api is under development
     
     {"id" : "93847774774848",
-        "rating": "comment"
-        "star" :"3"
+        "comment": "comment"
+        "rating" :"3"
     }
     
     note that the id is gotten from the get request
@@ -774,8 +804,20 @@ class Completedrequest(GenericAPIView):
     def patch(self,request,format=None):
         user= request.user
         id= request.data.get('id')
-        
+        ratings= request.data.get('rating')
+        comment= request.data.get('comment')
+
         job= JobRequest.objects.get(id=id)
+        carier = job.carier
+        rating =Rating(jobrequest=job,carier=carier,rating=ratings,comment=comment)
+        rating.save()
+        carier_id=carier.id
+        driver= Drivers.objects.get(id=carier_id)
+        totalrate= float((float(driver.rating) + int(ratings))/2)
+        totalsuccess= int(int(driver.totaldelivery) + 1)
+        driver.rating=totalrate
+        driver.totaldelivery=totalsuccess
+        driver.save()        
         tempdata = {'status':'completed'}
         serializer = RequestSerializer(job,data=tempdata,partial=True)
         serializer.is_valid(raise_exception=True)
@@ -798,6 +840,9 @@ class Completedrequest(GenericAPIView):
         return Response(
                         RequestSerializer(job,many=True).data
                     ) 
+
+    def calculaterating(self):
+        pass
 
 class OwnerEmail(GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -943,12 +988,14 @@ class DriverRequestsCompleted(GenericAPIView):
     serializer_class = DriverSerializers
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication, )
+    
     def get(self,request,format=None):
         user = request.user
         status = 'Completed'
         # job_request= JobRequest.objects.get(id=id)
         driver_id = Drivers.objects.get(user = user)
         driverrequest= DriverRequest.objects.filter(status=status)
+        
         # job = JobRequest.objects.filter(id=driverrequest.jobrequest)
         # print(driver_id)
 
