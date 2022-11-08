@@ -39,9 +39,10 @@ class ValidatePhoneSendOTP(GenericAPIView):
                 return Response({'status': False, 'detail': 'Phone Number already exists'})
                  # logic to send the otp and store the phone number and that otp in table. 
             else:
-                otp = otp_generator()
+                otp = 1234#otp_generator()
                 try:
-                    send_otp=MessageHandler(phone,otp).send_otp()
+                    #send_otp=MessageHandler(phone,otp).send_otp()
+                    send_otp=1234
                 except:
                     return Response({'status': False, 'detail': ' unable to send otp check the number again '})
 
@@ -294,9 +295,9 @@ class ValidateLogin(GenericAPIView):
                 return Response({'status': False, 'detail': 'Phone Number does not exist please kindly signup'})
                  # logic to send the otp and store the phone number and that otp in table. 
             else:
-                otp = otp_generator()
+                otp = 1234#otp_generator()
                 try:
-                    send_otp=MessageHandler(phone,otp).send_otp()
+                    send_otp=1234#MessageHandler(phone,otp).send_otp()
                 except:
                     return Response({'status': False, 'detail': ' unable to send otp check the number again '})
                 print(phone, otp)
