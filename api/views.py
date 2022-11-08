@@ -445,7 +445,7 @@ class Profile(GenericAPIView):
     @swagger_auto_schema(operation_summary=' getting of driver api',operation_description=' this api GET the driver profile '
     ,responses={200:'successfull',  "id": 'string',
                 "driver_number":'string',
-                'first_name ':'string',
+                'first_name':'string',
                 "last_name":'string',
                 "email":'string',
                 "ssn":'string',
@@ -472,14 +472,15 @@ class Profile(GenericAPIView):
         kd= {
                 "id":ve.id,
                 "driver_number":ve.driver_number,
-                'first_name ':ve.first_name,
+                'first_name':ve.first_name,
                 "last_name":ve.last_name,
                 "email":ve.email,
                 "ssn":ve.ssn,
                 "vehicle_color":ve.vehicle.color,
                 "make":ve.vehicle.make,
                 'model':ve.vehicle.model,
-                "year":ve.vehicle.year
+                "year":ve.vehicle.year,
+                "phone": request.user.phone
 
 
             }
