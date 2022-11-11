@@ -9,12 +9,14 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .forms import UserAdminCreationForm, UserAdminChangeForm
 
 
-from .models import Drivers, Ownerprofiles, PhoneOTP,Vehicle,JobRequest,DriverRequest
+from .models import Drivers, Ownerprofiles, PhoneOTP,Vehicle,JobRequest,DriverRequest,Notice,Rating
 
 admin.site.register(PhoneOTP)
 admin.site.register(Vehicle)
 admin.site.register(JobRequest)
 admin.site.register(DriverRequest)
+admin.site.register(Rating)
+admin.site.register(Notice)
 
 class DriverInline(admin.StackedInline):
     model = Drivers

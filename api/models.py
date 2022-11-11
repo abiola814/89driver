@@ -190,6 +190,7 @@ class Drivers(models.Model):
     online          =   models.BooleanField(default=False)
     rating          =   models.FloatField(default=0)
     totaldelivery   =   models.IntegerField(default=0)
+
     def __str__(self):
         return str(self.user) 
 
@@ -296,6 +297,14 @@ class PhoneOTP(models.Model):
 
     def __str__(self):
         return str(self.phone) + ' is sent ' + str(self.otp)
+
+class Notice(models.Model):
+    user= models.ForeignKey(User,on_delete=models.CASCADE)
+    last_notice = models.CharField(max_length=200)
+    create_at   =   models.DateField(default=timezone.now)
+
+    def __str__(self) -> str:
+        return str(self.last_notice)
 
 
 # class Driverprofile(models.Model):

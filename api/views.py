@@ -13,7 +13,7 @@ from rest_framework.generics import GenericAPIView
 from .message import MessageHandler
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
-from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest,Rating
+from .models import Ownerprofiles, PhoneOTP, User,Drivers, Vehicle,JobRequest,DriverRequest,Rating,Notice
 from .serializer import CreateUserSerializer, CreateAdminUserSerializer,DriverSerializers,OwnerSerializer, LoginUserSerializer,DriverSerializer,VehicleSerializer,JobRequestSerializer,RequestSerializer,DriverSerializers
 from .utils import otp_generator, password_generator, phone_validator
 from drf_yasg import openapi
@@ -669,7 +669,10 @@ class Createjob(ListCreateAPIView):
         serializer = JobRequestSerializer(data=temp_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
+        drivernotice= Notice(user=driver.user,last_notice=f" new delivery request from {pickup_address}")
+        drivernotice.save()
+        ownernotice= Notice(user=request.user,last_notice=f" delivery request sent to {driver.first_name} {driver.last_name}")
+        ownernotice.save()
         return Response({
                     'status': True, 'detail': 'Request succesfully created.'
                 })
@@ -724,6 +727,7 @@ class activerequest(GenericAPIView):
         serializer = RequestSerializer(job,data=tempdata,partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        
         return Response({
                     'status': True, 'detail': 'Request succesfully changed to pending.'
                 })
@@ -952,6 +956,8 @@ class DriverRequests(GenericAPIView):
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            ownernotice= Notice(user=request.job.owner,last_notice=f" delivery request accepted by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to accpeted.'
                     })
@@ -962,6 +968,8 @@ class DriverRequests(GenericAPIView):
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            ownernotice= Notice(user=request.job.owner,last_notice=f" delivery request completed by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Completed.'
                     })
@@ -972,6 +980,8 @@ class DriverRequests(GenericAPIView):
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            ownernotice= Notice(user=request.job.owner,last_notice=f" delivery request Declined by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Declined.'
                     })
@@ -1018,3 +1028,21 @@ class DriverRequestsCompleted(GenericAPIView):
 
         return Response({'status': True,'job':list(k)})
         # dns1.p02.nsone.net
+
+class Notification(GenericAPIView):
+    '''
+    api for get the driver completed job 
+   
+    
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def get(self,request,format=None):
+        user = request.user
+        try:
+
+            note = Notice.objects.filter(user=user).last()
+            
+        except:
+            return Response({'status': False,'detail':"notification not available"})            
+        return Response({'status': True,'notice':note.last_notice,'timecreated':note.create_at})
