@@ -659,8 +659,13 @@ class Createjob(ListCreateAPIView):
         delivery_address= 0
         delivery_lat = 0
         delivery_long = 0
-        pickup_address= request.user.ownerprofiles.resturant_location
-        resturant_name = request.user.ownerprofiles.resturant_name
+        try:
+            pickup_address= request.user.ownerprofiles.resturant_location
+            resturant_name = request.user.ownerprofiles.resturant_name
+        except:
+            return Response({
+                    'status': False, 'detail': 'Request denied you are not a resturant.'
+                })
         owner=request.user
         temp_data = {'owner': owner.id,'pickup_address':pickup_address,'pickup_lat':pickup_lat,'delivery_address':delivery_address,
         'delivery_lat':delivery_lat,'delivery_long':delivery_long,'resturant_name':resturant_name,
