@@ -1042,7 +1042,8 @@ class Notification(GenericAPIView):
         try:
 
             note = Notice.objects.filter(user=user).last()
-            
+            np=note.last_notice
+
         except:
             return Response({'status': False,'detail':"notification not available"})            
         return Response({'status': True,'notice':note.last_notice,'timecreated':note.create_at})
