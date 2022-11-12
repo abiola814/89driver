@@ -1063,3 +1063,22 @@ class Notification(GenericAPIView):
         except:
             return Response({'status': False,'detail':"notification not available"})            
         return Response({'status': True,'notice':note.last_notice,'timecreated':note.create_at})
+
+
+class AllNotification(GenericAPIView):
+    '''
+    api for get the driver completed job 
+   
+    
+    '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+    def get(self,request,format=None):
+        user = request.user
+        try:
+
+            note = Notice.objects.filter(user=user).values()
+
+        except:
+            return Response({'status': False,'detail':"notification not available"})            
+        return Response({'status': True,'notice':note})

@@ -26,6 +26,7 @@ urlpatterns = [
         path('driverlocation/',views.driverlocation.as_view(),name='job' ),
         path('nearbydriver/',views.nearbydriver.as_view(),name='job' ),
         path('notification/',views.Notification.as_view(),name='job' ),
+           path('allnotification/',views.AllNotification.as_view(),name='job' ),
 
 
 ]
