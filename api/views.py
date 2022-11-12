@@ -680,7 +680,7 @@ class Createjob(ListCreateAPIView):
         ownernotice= Notice(user=request.user,last_notice=f" delivery request sent to {driver.first_name} {driver.last_name}")
         ownernotice.save()
         comfirmjob=JobRequest.objects.filter(owner=owner).last()
-        driverjob=DriverRequest(carier=driver_id,Jobrequest=comfirmjob.id)
+        driverjob=DriverRequest(carier=driver,Jobrequest=comfirmjob.id)
         driverjob.save()
         return Response({
                     'status': True, 'detail': 'Request succesfully created.'
