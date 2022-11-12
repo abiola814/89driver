@@ -27,6 +27,8 @@ urlpatterns = [
         path('nearbydriver/',views.nearbydriver.as_view(),name='job' ),
         path('notification/',views.Notification.as_view(),name='job' ),
            path('allnotification/',views.AllNotification.as_view(),name='job' ),
+                      path('resturantprofile/',views.Resturantprofile.as_view(),name='job' ),
+
 
 
 ]
