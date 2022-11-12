@@ -692,12 +692,16 @@ class Createjob(ListCreateAPIView):
         for job in jobs:
             driver=job.carier.id
             drive=Drivers.objects.get(id=driver)
+            try:
+                imag=drive.image.url
+            except:
+                imag=''
             kd= {
                 "id":job.id,
                 "status":job.status,
                 "first_name":drive.first_name,
                 "last_name":drive.last_name,
-                "picture":drive.image.url
+                "picture":imag
             }
             k.append(kd)
         
