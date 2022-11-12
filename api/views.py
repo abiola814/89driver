@@ -685,12 +685,23 @@ class Createjob(ListCreateAPIView):
     def get(self,request):
         user= request.user
         try:
-            job= JobRequest.objects.filter(owner=user.id)
+            jobs= JobRequest.objects.filter(owner=user.id)
         except JobRequest.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        return Response(
-                        JobRequestSerializer(job,many=True).data
-                    )
+        k=[]
+        for job in jobs:
+            driver=job.carier.id
+            drive=Drivers.objects.get(id=driver)
+            kd= {
+                "id":job.id,
+                "status":job.status,
+                "first_name":drive.first_name,
+                "last_name":drive.last_name,
+                "picture":drive.image.url
+            }
+            k.append(kd)
+        
+        return Response({'status': True,'job':list(k)})
         
         
 class nearbydriver(GenericAPIView):
