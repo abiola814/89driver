@@ -1086,3 +1086,43 @@ class AllNotification(GenericAPIView):
         except:
             return Response({'status': False,'detail':"notification not available"})            
         return Response({'status': True,'notice':note})
+
+
+class Resturantprofile(GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
+
+    '''take in profile of owner
+         {
+        'email":"jjk@gmail.com",
+        'name':"resturant name'
+        'location':"resturant location'
+
+         }  
+
+         return a status True if the request went well with detail of what happened
+         retuen false if the process did not go well note and detail of what happened is attached to this request
+    '''
+
+    def patch(self,request,format=None):
+        user= request.user
+        email= request.data.get('email',False)
+        name= request.data.get('name',False)
+        location= request.data.get('location',False)
+        owner=Ownerprofiles.objects.get(user=user)
+        if email:
+            owner.email=email
+        elif name:
+            owner.resturant_name=name
+        elif location:
+            owner.resturant_location=location
+        else:
+            return Response({'status': False, 'detail': 'no information was passed'})
+        owner.save()
+        return Response({'status': True, 'detail': 'information succesfull added'})
+    def get(self,request):
+        user=request.user
+        owner=Ownerprofiles.objects.get(user=user)
+        return Response({'status': True, 'email': owner.email,'phone':request.user.phone,'location':owner.resturant_location,'name':owner.resturant_name})
+
+
