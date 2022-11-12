@@ -650,6 +650,7 @@ class Createjob(ListCreateAPIView):
                 'pickup_long ':'float',
                 'driver_id':"string"
                 })
+    
     def post(self, request,format=None):
         driver_id =request.data.get("driver_id")
         driver= Drivers.objects.get(id= driver_id)
@@ -678,6 +679,9 @@ class Createjob(ListCreateAPIView):
         drivernotice.save()
         ownernotice= Notice(user=request.user,last_notice=f" delivery request sent to {driver.first_name} {driver.last_name}")
         ownernotice.save()
+        comfirmjob=JobRequest.objects.filter(owner=owner).last()
+        driverjob=DriverRequest(carier=driver_id,Jobrequest=comfirmjob.id)
+        driverjob.save()
         return Response({
                     'status': True, 'detail': 'Request succesfully created.'
                 })
