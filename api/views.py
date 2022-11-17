@@ -1113,6 +1113,7 @@ class Resturantprofile(GenericAPIView):
         email= request.data.get('email',False)
         name= request.data.get('name',False)
         location= request.data.get('location',False)
+        image = request.files.get('image',False)
         owner=Ownerprofiles.objects.get(user=user)
         if email:
             owner.email=email
@@ -1120,6 +1121,8 @@ class Resturantprofile(GenericAPIView):
             owner.resturant_name=name
         elif location:
             owner.resturant_location=location
+        elif image:
+            owner.image=image
         else:
             return Response({'status': False, 'detail': 'no information was passed'})
         owner.save()
