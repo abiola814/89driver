@@ -218,9 +218,12 @@ class AdminOwnerInfo(GenericAPIView):
             try:
                 owner= Ownerprofiles.objects.get(user=user)
                 kd={
-                    "id":user.id,
+                    "id":owner.id,
                     'phone':user.phone,
-                    "email":user.email
+                    "email":user.email,
+                    'resturant_location':owner.resturant_location,
+                    "resturant_name":owner.resturant_name,
+                    'image':owner.image.url
                 }
                 k.append(kd)
             except:
