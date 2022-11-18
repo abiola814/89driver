@@ -221,7 +221,9 @@ class AdminOwnerInfo(GenericAPIView):
                     "id":owner.id,
                     'phone':user.phone,
                     "email":user.email,
-             
+                    'resturant_location':owner.resturant_location,
+                    "resturant_name":owner.resturant_name,
+                    
                 }
                 k.append(kd)
             except:
