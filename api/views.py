@@ -207,6 +207,14 @@ class AdminRegister(GenericAPIView):
                 'status' : False,
                 'detail' : 'Either phone number or email was not recieved in Post request'
             })
+
+class AdminOwnerInfo(GenericAPIView):
+
+    def get(request):
+        user = User.objects.all()
+        return Response({'owner':user})
+
+
 class ownerRegister(GenericAPIView):
 
 

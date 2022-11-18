@@ -29,6 +29,7 @@ urlpatterns = [
            path('allnotification/',views.AllNotification.as_view(),name='job' ),
                       path('resturantprofile/',views.Resturantprofile.as_view(),name='job' ),
 
+                      path('allowner/',views.AdminOwnerInfo.as_view(),name='job' ),
 
 
 ]
