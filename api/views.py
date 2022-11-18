@@ -211,8 +211,17 @@ class AdminRegister(GenericAPIView):
 class AdminOwnerInfo(GenericAPIView):
 
     def get(self,request):
-        user = User.objects.all()
-        return Response({'owner':user})
+        users = User.objects.all()
+
+        k=[]
+        for user in users:
+            kd={
+                "id":user.id,
+                'phone':user.phone,
+                "email":user.email
+            }
+            k.append(kd)
+        return Response({'owner':k})
 
 
 class ownerRegister(GenericAPIView):
