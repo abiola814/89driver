@@ -215,12 +215,16 @@ class AdminOwnerInfo(GenericAPIView):
 
         k=[]
         for user in users:
-            kd={
-                "id":user.id,
-                'phone':user.phone,
-                "email":user.email
-            }
-            k.append(kd)
+            try:
+                owner= Ownerprofiles.objects.get(user=user)
+                kd={
+                    "id":user.id,
+                    'phone':user.phone,
+                    "email":user.email
+                }
+                k.append(kd)
+            except:
+                pass
         return Response({'owner':k})
 
 
