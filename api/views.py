@@ -210,7 +210,7 @@ class AdminRegister(GenericAPIView):
 
 class AdminOwnerInfo(GenericAPIView):
 
-    def get(request):
+    def get(self,request):
         user = User.objects.all()
         return Response({'owner':user})
 
