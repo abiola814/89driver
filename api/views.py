@@ -229,6 +229,176 @@ class AdminOwnerInfo(GenericAPIView):
             except:
                 pass
         return Response({'owner':k})
+    def patch(self,request):
+        id= request.data.get('id')
+        name = request.data.get('resturant_name',False)
+        location = request.data.get('resturant_location',False)
+        user = User.objects.get(id=id)
+        try:
+            owner=Ownerprofiles.objects.get(user=user)
+        except:
+            return Response({
+            'status': True,'details':"account does not exist"
+        })
+        if name:
+            owner.resturant_name=name
+        if location:
+            owner.resturant_location=location
+
+        
+        owner.save()
+        
+        return Response({
+            'status': True,'details':"account succesfully edited"
+        })    
+    def delete(self,request):
+        id= request.data.get('id')
+        user = User.objects.get(id=id)
+        try:
+            driver=Ownerprofiles.objects.get(user=user)
+        except:
+            return Response({
+            'status': True,'details':"account does not exist"
+        })
+        driver.delete()
+        user.delete()
+
+        return Response({
+            'status': True,'details':"account succesfully deleted"
+        })
+
+class AdminDriverInfo(GenericAPIView):
+
+    def get(self,request):
+        users = User.objects.all()
+
+        k=[]
+        for user in users:
+            try:
+                owner= Drivers.objects.get(user=user)
+                kd={
+                    "id":user.id,
+                    'phone':user.phone,
+                    "email":user.email,
+                    "driver_number":owner.driver_number,
+                    'first_name':owner.first_name,
+                    "last_name":owner.last_name,
+                    "email":owner.email,
+                    "ssn":owner.ssn,
+                    "vehicle_color":owner.vehicle.color,
+                    "make":owner.vehicle.make,
+                    'model':owner.vehicle.model,
+                    "year":owner.vehicle.year,
+                    
+                }
+                k.append(kd)
+            except:
+                pass
+        return Response({'owner':k})
+    def delete(self,request):
+        id= request.data.get('id')
+        user = User.objects.get(id=id)
+        try:
+            driver=Drivers.objects.get(user=user)
+        except:
+            return Response({
+            'status': True,'details':"account does not exist"
+        })
+        driver.delete()
+        user.delete()
+
+        return Response({
+            'status': True,'details':"account succesfully deleted"
+        })
+    def patch(self,request):
+        id= request.data.get('id')
+        first = request.data.get('first_name',False)
+        last = request.data.get('last_name',False)
+        middle = request.data.get('middle_name',False)
+        ssn = request.data.get('ssn',False)
+        driver_number = request.data.get('driver_number',False)
+        state = request.data.get('state',False)
+        user = User.objects.get(id=id)
+        try:
+            driver=Drivers.objects.get(user=user)
+        except:
+            return Response({
+            'status': True,'details':"account does not exist"
+        })
+        if ssn:
+            driver.ssn=ssn
+        if state:
+            driver.state=state
+        if driver_number:
+            driver.driver_number=driver_number
+        if first:
+            driver.first_name=first
+        if last:
+            driver.last_name=last
+        if middle:
+            driver.middle_name=middle
+        
+        driver.save()
+        
+        return Response({
+            'status': True,'details':"account succesfully edited"
+        })   
+
+class Adminjob(GenericAPIView):
+
+    def get(self,request):
+        
+        jobs = JobRequest.objects.all()
+
+        k=[]
+        for job in jobs:
+            try:
+                owner= Ownerprofiles.objects.get(user=job.owner)
+                kd={
+                    "id":job.id,
+                    "pickup_lat":job.pickup_lat,
+                    "pickup_long":job.pickup_long,
+                    "pickup_address":job.pickup_address,
+                    "owner":owner.resturant_name,
+                    "loaction":owner.resturant_location,
+                    "status":job.status,
+                    "driver":job.carier.first_name + job.carier.last_name,
+                    "create_at":job.create_at
+
+                }
+                k.append(kd)
+            except:
+                pass
+        return Response({'job':k})
+    def patch(self,request):
+        id = request.data.get('id')
+        try:
+            job = JobRequest.objects.get(id=id)
+        except:
+            return Response({
+            'status': True,'details':"job does not exist"
+        })
+
+        status = request.data.get('status')
+        job.status=status
+        job.save()
+        return Response({
+            'status': True,'details':"job status changed"
+        })
+    def delete(self,request):
+        id = request.data.get('id')
+        try:
+            job = JobRequest.objects.get(id=id)
+        except:
+            return Response({
+            'status': True,'details':"job does not exist"
+        })
+
+        job.delete()
+        return Response({
+            'status': True,'details':"job deleted"
+        })
+
 
 
 class ownerRegister(GenericAPIView):
