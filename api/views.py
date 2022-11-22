@@ -210,11 +210,17 @@ class AdminRegister(GenericAPIView):
 
 class AdminOwnerInfo(GenericAPIView):
 
+
+    @swagger_auto_schema(operation_summary=' get rwquest collect all resturant owner that is in the database',operation_description='produce the total number of resturant owner in the database'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def get(self,request):
         users = User.objects.all()
 
         k=[]
+        count=0
         for user in users:
+            count +=1
             try:
                 owner= Ownerprofiles.objects.get(user=user)
                 kd={
@@ -228,7 +234,14 @@ class AdminOwnerInfo(GenericAPIView):
                 k.append(kd)
             except:
                 pass
-        return Response({'owner':k})
+        return Response({'owner':k,'total number':count})
+
+    phone_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("resturant_name",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otps_param =openapi.Parameter("resturant_location",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' patch rwquest update date of resturant owner that is in the database',manual_parameters=[phone_param,otp_param,otps_param],operation_description='update owneeer information in the database  note it is not compulsory you fill in the all param fill the ones that is needed'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def patch(self,request):
         id= request.data.get('id')
         name = request.data.get('resturant_name',False)
@@ -238,7 +251,7 @@ class AdminOwnerInfo(GenericAPIView):
             owner=Ownerprofiles.objects.get(user=user)
         except:
             return Response({
-            'status': True,'details':"account does not exist"
+            'status': False,'details':"account does not exist"
         })
         if name:
             owner.resturant_name=name
@@ -251,6 +264,10 @@ class AdminOwnerInfo(GenericAPIView):
         return Response({
             'status': True,'details':"account succesfully edited"
         })    
+    phone_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' delete rwquest delete date of resturant owner that is in the database',manual_parameters=[phone_param,otp_param,otps_param],operation_description='delete owneeer information in the database  this use the id to know or identify the owner to delete'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def delete(self,request):
         id= request.data.get('id')
         user = User.objects.get(id=id)
@@ -258,7 +275,7 @@ class AdminOwnerInfo(GenericAPIView):
             driver=Ownerprofiles.objects.get(user=user)
         except:
             return Response({
-            'status': True,'details':"account does not exist"
+            'status': False,'details':"account does not exist"
         })
         driver.delete()
         user.delete()
@@ -268,6 +285,10 @@ class AdminOwnerInfo(GenericAPIView):
         })
 
 class AdminDriverInfo(GenericAPIView):
+
+
+    @swagger_auto_schema(operation_summary=' get request collect all driver that is in the database',operation_description='produce the total number of driver in the database'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
     def get(self,request):
         users = User.objects.all()
@@ -295,6 +316,10 @@ class AdminDriverInfo(GenericAPIView):
             except:
                 pass
         return Response({'owner':k})
+    phone_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' delete rwquest delete date of driver that is in the database',operation_description='delete driver information in the database by using the id given to know the driver to delete'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def delete(self,request):
         id= request.data.get('id')
         user = User.objects.get(id=id)
@@ -310,6 +335,18 @@ class AdminDriverInfo(GenericAPIView):
         return Response({
             'status': True,'details':"account succesfully deleted"
         })
+
+
+    phone_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("first_name",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    otps_param =openapi.Parameter("last_name",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    middle_param =openapi.Parameter("state",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    ssn_param =openapi.Parameter("ssn",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    driver_param =openapi.Parameter("driver_number",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    state_param =openapi.Parameter("middle_name",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(operation_summary=' patch rwquest update date of driver that is in the database',manual_parameters=[phone_param,otp_param,otps_param,driver_param,ssn_param,state_param,middle_param],operation_description='update driver information in the database  note it is not compulsory you fill in the all param fill the ones that is needed'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def patch(self,request):
         id= request.data.get('id')
         first = request.data.get('first_name',False)
@@ -323,7 +360,7 @@ class AdminDriverInfo(GenericAPIView):
             driver=Drivers.objects.get(user=user)
         except:
             return Response({
-            'status': True,'details':"account does not exist"
+            'status': False,'details':"account does not exist"
         })
         if ssn:
             driver.ssn=ssn
@@ -345,6 +382,10 @@ class AdminDriverInfo(GenericAPIView):
         })   
 
 class Adminjob(GenericAPIView):
+
+
+    @swagger_auto_schema(operation_summary=' get request collect all job that is in the database',operation_description='produce the total number of job in the database'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
     def get(self,request):
         
@@ -370,6 +411,11 @@ class Adminjob(GenericAPIView):
             except:
                 pass
         return Response({'job':k})
+    id_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    status_param =openapi.Parameter("status",openapi.IN_QUERY,type=openapi.TYPE_STRING)
+    @swagger_auto_schema(operation_summary=' patch rwquest update status of job that is in the database',manual_parameters=[id_param,status_param],operation_description='update status of job in the database 
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def patch(self,request):
         id = request.data.get('id')
         try:
@@ -385,6 +431,10 @@ class Adminjob(GenericAPIView):
         return Response({
             'status': True,'details':"job status changed"
         })
+    phone_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(operation_summary=' delete rwquest delete date of job that is in the database',operation_description='delete job information in the database by using the id given to know the job to delete'
+    ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
+
     def delete(self,request):
         id = request.data.get('id')
         try:
@@ -557,7 +607,7 @@ class AdminLoginAPI(KnoxLoginView,GenericAPIView):
 
 
     phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
-    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("password",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
     @swagger_auto_schema(operation_summary=' login admin user',manual_parameters=[phone_param,otp_param],operation_description='    this api takes the user phone number and password to login'
     ,responses={200:'successfull','response description':" return the auth token"})
 
