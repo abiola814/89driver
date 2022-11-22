@@ -413,7 +413,7 @@ class Adminjob(GenericAPIView):
         return Response({'job':k})
     id_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_STRING)
     status_param =openapi.Parameter("status",openapi.IN_QUERY,type=openapi.TYPE_STRING)
-    @swagger_auto_schema(operation_summary=' patch rwquest update status of job that is in the database',manual_parameters=[id_param,status_param],operation_description='update status of job in the database 
+    @swagger_auto_schema(operation_summary=' patch rwquest update status of job that is in the database',manual_parameters=[id_param,status_param],operation_description='update status of job in the database '
     ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
     def patch(self,request):
