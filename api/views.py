@@ -220,7 +220,7 @@ class AdminOwnerInfo(GenericAPIView):
         k=[]
         count=0
         for user in users:
-            count +=1
+         
             try:
                 owner= Ownerprofiles.objects.get(user=user)
                 kd={
@@ -232,6 +232,7 @@ class AdminOwnerInfo(GenericAPIView):
                     
                 }
                 k.append(kd)
+                count +=1
             except:
                 pass
         return Response({'owner':k,'total number':count})
@@ -294,6 +295,7 @@ class AdminDriverInfo(GenericAPIView):
         users = User.objects.all()
 
         k=[]
+        count=0
         for user in users:
             try:
                 owner= Drivers.objects.get(user=user)
@@ -313,9 +315,10 @@ class AdminDriverInfo(GenericAPIView):
                     
                 }
                 k.append(kd)
+                count +=1
             except:
                 pass
-        return Response({'owner':k})
+        return Response({'owner':k,'total':count})
     phone_param =openapi.Parameter("id",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
     @swagger_auto_schema(operation_summary=' delete rwquest delete date of driver that is in the database',operation_description='delete driver information in the database by using the id given to know the driver to delete'
     ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
