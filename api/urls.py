@@ -32,5 +32,7 @@ urlpatterns = [
                       path('allowner/',views.AdminOwnerInfo.as_view(),name='job' ),
                        path('alldriver/',views.AdminDriverInfo.as_view(),name='job' ),
                         path('alljobs/',views.Adminjob.as_view(),name='job' ),
+                        path('adminregister',views.AdminRegister),
+                        path('adminlogin',views.AdminLoginAPI)
 
 ]
