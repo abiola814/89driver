@@ -210,7 +210,8 @@ class AdminRegister(GenericAPIView):
 
 class AdminOwnerInfo(GenericAPIView):
 
-
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
     @swagger_auto_schema(operation_summary=' get rwquest collect all resturant owner that is in the database',operation_description='produce the total number of resturant owner in the database'
     ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
@@ -287,7 +288,8 @@ class AdminOwnerInfo(GenericAPIView):
 
 class AdminDriverInfo(GenericAPIView):
 
-
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
     @swagger_auto_schema(operation_summary=' get request collect all driver that is in the database',operation_description='produce the total number of driver in the database'
     ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
 
@@ -386,6 +388,9 @@ class AdminDriverInfo(GenericAPIView):
 
 class Adminjob(GenericAPIView):
 
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
 
     @swagger_auto_schema(operation_summary=' get request collect all job that is in the database',operation_description='produce the total number of job in the database'
     ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
