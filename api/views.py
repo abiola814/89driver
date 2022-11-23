@@ -176,7 +176,7 @@ class AdminRegister(GenericAPIView):
     serializer_class = CreateAdminUserSerializer
 
     phone_param =openapi.Parameter("phone",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
-    otp_param =openapi.Parameter("otp",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
+    otp_param =openapi.Parameter("password",openapi.IN_QUERY,type=openapi.TYPE_INTEGER)
     @swagger_auto_schema(operation_summary=' register an admin user',manual_parameters=[phone_param,otp_param],operation_description='Takes phone and email and creates a new user only if otp was verified and only new phone can register'
     ,responses={200:'successfull','response description':"return a status True if the request went well with detail of what happenedretuen false if the process did not go well note and detail of what happened is attached to this request",'status':"true",'detail':'infomation of what happened'})
     def post(self, request, *args, **kwargs):
