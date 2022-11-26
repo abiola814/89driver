@@ -1366,7 +1366,7 @@ class Resturantprofile(GenericAPIView):
         email= request.data.get('email',False)
         name= request.data.get('name',False)
         location= request.data.get('location',False)
-        image = request.files.get('image',False)
+        image = request.FILES.get('image',False)
         owner=Ownerprofiles.objects.get(user=user)
         if email:
             owner.email=email
@@ -1383,6 +1383,6 @@ class Resturantprofile(GenericAPIView):
     def get(self,request):
         user=request.user
         owner=Ownerprofiles.objects.get(user=user)
-        return Response({'status': True, 'email': owner.email,'phone':request.user.phone,'location':owner.resturant_location,'name':owner.resturant_name})
+        return Response({'status': True, 'email': owner.email,'phone':request.user.phone,'location':owner.resturant_location,'image':owner.image.url,'name':owner.resturant_name})
 
 
