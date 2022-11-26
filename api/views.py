@@ -741,7 +741,7 @@ class Profile(GenericAPIView):
 
     def patch(self,request):
         driver= Drivers.objects.get(user=request.user)
-        if request.files.get('image'):
+        if request.FILES.get('image'):
             image = request.FILES.get('image')
             driver.image=image
         if request.data.get('email'):
