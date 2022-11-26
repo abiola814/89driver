@@ -971,6 +971,7 @@ class nearbydriver(GenericAPIView):
         user= request.user
         drivers = Drivers.objects.filter(online=True)
         driver=drivers.values()
+        print(driver)
         return Response({
                      'nearbydriver':driver}
                     ) 
