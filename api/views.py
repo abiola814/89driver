@@ -1236,7 +1236,7 @@ class DriverRequests(GenericAPIView):
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            ownernotice= Notice(user=own,last_notice=f" delivery request accepted by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice= Notice(user=own,last_notice=f" delivery request accepted by {driverrequest.carier.first_name} {driverrequest.carier.last_name}")
             ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to accpeted.'
