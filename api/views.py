@@ -1227,6 +1227,7 @@ class DriverRequests(GenericAPIView):
         
 
         driverrequest= DriverRequest.objects.get(id=id)
+        own= User.objects.get(phone=job.owner)
         job= JobRequest.objects.get(id=driverrequest.jobrequest.id)
         if status == 'Accept':
             job.status='active'
@@ -1248,7 +1249,7 @@ class DriverRequests(GenericAPIView):
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            ownernotice= Notice(user=request.job.owner,last_notice=f" delivery request completed by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice= Notice(user=own,last_notice=f" delivery request completed by {driverrequest.carier.first_name} {driverrequest.carier.last_name}")
             ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Completed.'
@@ -1260,7 +1261,7 @@ class DriverRequests(GenericAPIView):
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            ownernotice= Notice(user=request.job.owner,last_notice=f" delivery request Declined by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice= Notice(user=own,last_notice=f" delivery request Declined by {driverrequest.carier.first_name} {driverrequest.carier.last_name}")
             ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to Declined.'
