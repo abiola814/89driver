@@ -1231,11 +1231,12 @@ class DriverRequests(GenericAPIView):
         if status == 'Accept':
             job.status='active'
             job.save()
+            own= User.objects.get(phone=job.owner)
             tempdata = {'status':'Accept'}
             serializer = DriverSerializers(driverrequest,data=tempdata,partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            ownernotice= Notice(user=request.job.owner,last_notice=f" delivery request accepted by {driverrequest.first_name} {driverrequest.last_name}")
+            ownernotice= Notice(user=own,last_notice=f" delivery request accepted by {driverrequest.first_name} {driverrequest.last_name}")
             ownernotice.save()
             return Response({
                         'status': True, 'detail': 'Request succesfully changed to accpeted.'
