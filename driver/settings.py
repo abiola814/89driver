@@ -163,8 +163,7 @@ REST_KNOX={
     'TOKEN_TTL' : timedelta(hours=24+7),
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-ACCOUNT_SSID ="AC061c584f4c387edc2772fef1a084465f"
-AUTH_TOKEN="d91928dd22d729e593073ff8a84e5721"
+
 
 
 COMPRESS_ENABLED = os.environ.get('COMPRESS_ENABLED', False)
